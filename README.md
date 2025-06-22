@@ -115,7 +115,7 @@ interface LoaderData {
   tool: MCPResponse;
 }
 
-export default function Page({ loaderData }: { loaderData: LoaderData }) {
+export default function Page({ loaderData }: Route.ComponentProps) {
   const { isConnected, loading, readResource, callTool } = useMCP();
   const [resourceContent, setResourceContent] = useState(
     loaderData.resource.content
@@ -168,10 +168,9 @@ export default function Page({ loaderData }: { loaderData: LoaderData }) {
 
 ```tsx
 // routes/llm.action.ts
-import type { ActionFunctionArgs } from "react-router";
 import { createOllamaClient, createOpenAIClient } from "react-hook-mcp";
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   const prompt = formData.get("prompt") as string;
 
