@@ -216,70 +216,6 @@ El cliente web te permite:
 - Leer recursos (como `file:///hello.txt`)
 - Ejecutar herramientas (como `tool-pelusear`)
 
-### 3. Cliente LLM REST API
-
-Para conectar tu LLM REST API con el servidor MCP:
-
-```bash
-# Configurar API key
-export OPENAI_API_KEY="tu-api-key"
-# o
-export ANTHROPIC_API_KEY="tu-api-key"
-
-# Ejecutar cliente LLM
-npm run llm
-```
-
-#### Configuración para diferentes proveedores:
-
-**OpenAI (GPT):**
-
-```bash
-export OPENAI_API_KEY="sk-..."
-npm run llm
-```
-
-**Anthropic (Claude):**
-
-```bash
-export ANTHROPIC_API_KEY="sk-ant-..."
-npm run llm
-```
-
-**Ollama (local):**
-
-```bash
-export OLLAMA_HOST="http://localhost:11434"
-npm run llm
-```
-
-**API personalizada:**
-
-```typescript
-import { LLMRestClient } from "./llm_rest_client.js";
-import { LLMConfigs } from "./llm_config.js";
-
-const config = LLMConfigs.custom(
-  "https://tu-api.com/v1/chat",
-  "tu-modelo",
-  "tu-api-key"
-);
-
-const client = new LLMRestClient(config);
-```
-
-#### Ejemplo de uso con LLM:
-
-```
-Usuario: "Lee el archivo y ejecuta la herramienta"
-
-LLM: "Voy a leer el archivo hello.txt y luego ejecutar la herramienta de pelusear"
-
-MCP: Lee "Hello, World!" y ejecuta herramienta que responde "¡Has sido peluseado! 🐶"
-
-LLM: "Perfecto! He leído el archivo que contiene 'Hello, World!' y ejecuté la herramienta que respondió '¡Has sido peluseado! 🐶'. ¡Ha sido una experiencia completa!"
-```
-
 ## 🧩 Estructura del Servidor MCP
 
 El servidor incluye:
@@ -430,7 +366,6 @@ Esto ejecutará el archivo `llm_client_example.ts` y mostrará en consola los re
 npm run start      # Inicia el servidor MCP
 npm run dev        # Modo desarrollo (watch)
 npm run web        # Cliente web interactivo
-npm run llm        # Cliente LLM REST API
 npm run example    # Ejecuta todos los ejemplos del cliente LLM
 npm test           # Corre los tests de integración
 ```
