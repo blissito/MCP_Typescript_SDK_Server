@@ -196,38 +196,6 @@ export async function action({ request }: Route.ActionArgs) {
 }
 ```
 
-Y en tu componente puedes consumir la respuesta usando `useActionData`:
-
-```tsx
-// routes/llm.page.tsx
-import { Form, useActionData } from "react-router-dom";
-
-export default function LLMPage() {
-  const data = useActionData() as {
-    ollama: any;
-    openai: any;
-  };
-
-  return (
-    <div>
-      <h2>Probar LLMs pre-configurados</h2>
-      <Form method="post">
-        <input name="prompt" placeholder="Escribe tu pregunta..." />
-        <button type="submit">Enviar</button>
-      </Form>
-      {data && (
-        <div>
-          <h3>Respuesta Ollama:</h3>
-          <pre>{JSON.stringify(data.ollama, null, 2)}</pre>
-          <h3>Respuesta OpenAI:</h3>
-          <pre>{JSON.stringify(data.openai, null, 2)}</pre>
-        </div>
-      )}
-    </div>
-  );
-}
-```
-
 **Beneficios:**
 
 - ✅ **Hook reutilizable** para cualquier componente React
