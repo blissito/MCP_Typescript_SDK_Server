@@ -1,10 +1,39 @@
 # MCP Server Blissmo experiment 👽
 
-Un servidor simple de Model Context Protocol (MCP) creado con TypeScript con soporte para LLMs REST API.
+## 🚀 Instalación
 
-## 🎯 ¿Qué es esto?
+```bash
+npm install react-hook-mcp
+```
 
-Este proyecto demuestra cómo conectar un **LLM REST API** (como OpenAI, Claude, Ollama, etc.) con un **servidor MCP** para darle "superpoderes" al LLM, permitiéndole acceder a recursos y ejecutar herramientas en tu sistema.
+## 🚀 Quick Start
+
+```typescript
+// 1. Importar el cliente
+import { LLMRestClient } from 'react-hook-mcp';
+
+// 2. Configurar y usar con Ollama
+const client = new LLMRestClient({
+  apiUrl: "http://localhost:11434/api/chat",
+  model: "llama3.2:3b"
+});
+
+// 3. Consultar
+const respuesta = await client.processUserQuery("¿Qué hay en el archivo hello.txt?");
+```
+
+## 👥 Casos de Uso
+
+```typescript
+// Monitoreo de Servidores
+const respuesta = await client.processUserQuery("Verifica el estado de los servidores");
+
+// Análisis Financiero
+const respuesta = await client.processUserQuery("Analiza el reporte de ventas del Q4");
+
+// Seguridad
+const respuesta = await client.processUserQuery("Escanea el sistema en busca de vulnerabilidades");
+```
 
 ## 🏗️ Arquitectura
 
@@ -12,128 +41,44 @@ Este proyecto demuestra cómo conectar un **LLM REST API** (como OpenAI, Claude,
 Usuario → LLM REST API → LLMRestClient → MCP Server → Recursos/Herramientas
 ```
 
-### Flujo de trabajo:
+## 🎯 Características Principales
 
-1. **Usuario** hace una consulta al LLM
-2. **LLM** analiza qué necesita hacer
-3. **LLMRestClient** ejecuta las acciones en el servidor MCP
-4. **MCP Server** lee recursos o ejecuta herramientas
-5. **LLM** genera una respuesta final con los resultados
+- 🤖 **Integración con LLMs**
+  - OpenAI
+  - Claude
+  - Ollama
+  - APIs personalizadas
+- 📊 **Análisis en tiempo real**
+- 🛠️ **Ejecución de herramientas**
+- 📦 **Integración con React**
+  - Hook reutilizable
+  - Conexión automática
+  - Manejo de estados
+- ✅ **TypeScript completo**
+- ✅ **Manejo de errores robusto**
+- ✅ **Documentación detallada**
+- ✅ **Tests de integración** completos
 
-## 🎯 Casos de Uso
+## 🎯 ¿Cómo se usa en React?
 
-### 1. **Gestión de Infraestructura IT**
-
-```bash
-Usuario: "Verifica el estado de los servidores de producción y ejecuta el backup automático"
-LLM: [Lee métricas] [Ejecuta backup] "Los 12 servidores están operativos al 99.2% de rendimiento. He iniciado el backup incremental que completará en 15 minutos, liberando 2.3GB de espacio."
-```
-
-### 2. **Análisis Financiero y Reportes**
-
-```bash
-Usuario: "Lee el reporte de ventas del Q4 y ejecuta el análisis de rentabilidad por región"
-LLM: [Lee datos] [Ejecuta análisis] "Las ventas del Q4 alcanzaron $2.4M, un incremento del 18% vs Q3. La región Norte muestra la mayor rentabilidad (34%), mientras que el Sur requiere atención con un margen del 12%."
-```
-
-### 3. **Monitoreo de Aplicaciones Web**
-
-```bash
-Usuario: "Revisa los logs de error de la aplicación e-commerce y ejecuta el diagnóstico de rendimiento"
-LLM: [Lee logs] [Ejecuta diagnóstico] "Detecté 47 errores 500 en las últimas 24h, principalmente en el checkout. El diagnóstico revela latencia de base de datos. He optimizado las consultas críticas, reduciendo el tiempo de respuesta en un 40%."
-```
-
-### 4. **Gestión de Base de Datos Empresarial**
-
-```bash
-Usuario: "Analiza la base de datos de clientes y ejecuta la limpieza de datos duplicados"
-LLM: [Lee DB] [Ejecuta limpieza] "Identifiqué 1,247 registros duplicados (8.3% del total). He consolidado los datos manteniendo la información más reciente. La limpieza liberó 156MB de espacio y mejoró la integridad referencial."
-```
-
-### 5. **Seguridad y Compliance**
-
-```bash
-Usuario: "Escanea el sistema en busca de vulnerabilidades y ejecuta la actualización de parches críticos"
-LLM: [Lee reporte] [Ejecuta parches] "Encontré 3 vulnerabilidades críticas (CVE-2024-1234, CVE-2024-5678) y 7 de nivel medio. He aplicado los parches críticos y programado las actualizaciones de seguridad para las 2:00 AM."
-```
-
-### 6. **Análisis de Datos de Marketing**
-
-```bash
-Usuario: "Lee los datos de campañas digitales y ejecuta el análisis de ROI por canal"
-LLM: [Lee métricas] [Ejecuta análisis] "La campaña Q4 generó $890K en ventas con un ROI del 320%. Google Ads lidera con 45% de conversiones, mientras que Facebook muestra un costo por adquisición 23% menor. Recomiendo reasignar 15% del presupuesto a Facebook."
-```
-
-### 7. **Gestión de Contenedores y Microservicios**
-
-```bash
-Usuario: "Monitorea el estado de los contenedores en Kubernetes y ejecuta la limpieza de recursos"
-LLM: [Lee estado] [Ejecuta limpieza] "Tienes 47 pods ejecutándose en 8 namespaces. He identificado 12 pods huérfanos y 3 deployments con 0 réplicas. La limpieza liberó 4.2GB de almacenamiento y optimizó el uso de CPU en un 18%."
-```
-
-### 8. **Análisis de Logs y Troubleshooting**
-
-```bash
-Usuario: "Analiza los logs de la aplicación de pagos y ejecuta el diagnóstico de transacciones fallidas"
-LLM: [Lee logs] [Ejecuta diagnóstico] "En las últimas 6 horas, 23 transacciones fallaron (0.12% del total). El patrón indica timeouts en la integración con el procesador de pagos. He ajustado los timeouts y implementado retry automático, reduciendo fallas en un 85%."
-```
-
-### 9. **Gestión de Configuración de Red**
-
-```bash
-Usuario: "Lee la configuración de red y ejecuta la optimización de ancho de banda"
-LLM: [Lee config] [Ejecuta optimización] "La configuración actual tiene 30% de ancho de banda subutilizado. He optimizado el QoS, priorizado tráfico crítico y ajustado el rate limiting. Esto mejorará la latencia en un 25% y reducirá el uso de ancho de banda en un 15%."
-```
-
-### 10. **Análisis de Datos de Recursos Humanos**
-
-```bash
-Usuario: "Lee los datos de rendimiento de empleados y ejecuta el análisis de productividad por departamento"
-LLM: [Lee datos] [Ejecuta análisis] "El análisis muestra que el departamento de Desarrollo tiene la mayor productividad (94%), mientras que Ventas requiere atención con un 78%. He identificado 3 equipos que podrían beneficiarse de capacitación adicional, proyectando un incremento del 12% en productividad."
-```
-
-## ⚛️ ¿Cómo se usa en React?
-
-Aquí te muestro cómo integrar el servidor MCP con una aplicación React usando nuestro hook personalizado:
-
-### **1. Instalar dependencias**
-
-```bash
+```typescript
+// 1. Instalar
 npm install react-hook-mcp
-```
 
-### **2. Usar el hook useMCP**
-
-```tsx
-import React, { useState } from "react";
+// 2. Usar el hook useMCP
 import { useMCP } from "react-hook-mcp";
-import type { MCPResponse } from "react-hook-mcp";
 
-// Ejemplo de tipado para loaderData en React Router v7
-interface LoaderData {
-  resource: MCPResponse;
-  tool: MCPResponse;
-}
-
-export default function Page({ loaderData }: Route.ComponentProps) {
+export default function Page() {
   const { isConnected, loading, readResource, callTool } = useMCP();
-  const [resourceContent, setResourceContent] = useState(
-    loaderData.resource.content
-  );
-  const [toolResult, setToolResult] = useState(loaderData.tool.content);
 
   const handleReadResource = async () => {
     const result = await readResource("file:///hello.txt");
-    if (!result.error) {
-      setResourceContent(result.content);
-    }
+    console.log(result.content);
   };
 
   const handleCallTool = async () => {
     const result = await callTool("tool-pelusear");
-    if (!result.error) {
-      setToolResult(result.content);
-    }
+    console.log(result.content);
   };
 
   return (
@@ -145,69 +90,9 @@ export default function Page({ loaderData }: Route.ComponentProps) {
       <button onClick={handleCallTool} disabled={loading}>
         Ejecutar Herramienta
       </button>
-
-      {resourceContent && (
-        <div>
-          <h3>Contenido del recurso:</h3>
-          <pre>{resourceContent}</pre>
-        </div>
-      )}
-
-      {toolResult && (
-        <div>
-          <h3>Resultado de la herramienta:</h3>
-          <pre>{toolResult}</pre>
-        </div>
-      )}
     </div>
   );
 }
-```
-
-### **3. Usar clientes LLM pre-configurados con React Router v7 (action)**
-
-```tsx
-// routes/llm.action.ts
-import { createOllamaClient, createOpenAIClient } from "react-hook-mcp";
-
-export async function action({ request }: Route.ActionArgs) {
-  const formData = await request.formData();
-  const prompt = formData.get("prompt") as string;
-
-  // Cliente Ollama (local)
-  const ollamaClient = createOllamaClient("llama3.2:3b");
-  const ollamaResponse = await ollamaClient.chat([
-    { role: "user", content: prompt },
-  ]);
-
-  // Cliente OpenAI
-  const openaiClient = createOpenAIClient("tu-api-key", "gpt-3.5-turbo");
-  const openaiResponse = await openaiClient.chat([
-    { role: "user", content: prompt },
-  ]);
-
-  return new Response(
-    JSON.stringify({
-      ollama: ollamaResponse,
-      openai: openaiResponse,
-    }),
-    { headers: { "Content-Type": "application/json" } }
-  );
-}
-```
-
-**Beneficios:**
-
-- ✅ **Hook reutilizable** para cualquier componente React
-- ✅ **Conexión automática** al servidor MCP
-- ✅ **Manejo de estados** y errores incluido
-- ✅ **Integración fácil** con LLMs
-- ✅ **TypeScript** completo
-
-## 📦 Instalación
-
-```bash
-npm install
 ```
 
 ## 🚀 Uso
@@ -301,33 +186,6 @@ Los tests verifican que:
 - Las herramientas se pueden ejecutar
 - El cliente web funciona correctamente
 
-## 📁 Estructura del Proyecto
-
-```
-mcp_sdk_experiment/
-├── mcp_server.ts              # Servidor MCP principal
-├── web_server.ts              # Servidor web + WebSocket proxy
-├── web_client.html            # Cliente web interactivo
-├── llm_rest_client.ts         # Cliente LLM REST API
-├── llm_config.ts              # Configuraciones de LLM
-├── mcp_server.integration.test.ts  # Tests de integración
-├── web_server.test.ts         # Tests del servidor web
-├── package.json
-├── tsconfig.json
-└── README.md
-```
-
-## 🔧 Características
-
-- ✅ **Servidor MCP básico** con recursos y herramientas
-- ✅ **Cliente web interactivo** con WebSocket
-- ✅ **Cliente LLM REST API** para múltiples proveedores
-- ✅ **Soporte para OpenAI, Claude, Ollama** y APIs personalizadas
-- ✅ **Tests de integración** completos
-- ✅ **TypeScript** completo con tipos
-- ✅ **Manejo de errores** robusto
-- ✅ **Documentación** detallada
-
 ## 🚀 Próximos Pasos
 
 - [ ] Agregar más recursos (APIs, bases de datos, etc.)
@@ -359,37 +217,7 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 - [OpenAI](https://openai.com/) por GPT
 - [Ollama](https://ollama.ai/) por el modelo local
 
-## 🧪 Ejecución de Ejemplos
 
-Para correr todos los ejemplos del cliente LLM (incluyendo integración con MCP y diferentes modelos):
-
-```bash
-npm run example
-```
-
-Esto ejecutará el archivo `llm_client_example.ts` y mostrará en consola los resultados de cada ejemplo:
-
-- Ejemplo básico con Ollama
-- Ejemplo con OpenAI (si tienes API key)
-- Ejemplo de múltiples consultas
-- Ejemplo de manejo de errores
-- Ejemplo de configuración personalizada (usa un modelo ligero por defecto)
-
-**Recomendación:** Para pruebas rápidas, usa modelos ligeros de Ollama como `llama3.2:3b` o `gemma3:4b`. Los modelos grandes como `phi4:14b` pueden ser lentos.
-
-## 🛠️ Solución de Problemas
-
-- **Error 404 o 401:** Verifica que la URL y el modelo existan y que tu API key sea válida.
-- **Error de JSON o streaming:** El cliente fuerza `stream: false` para compatibilidad con Ollama. Si usas otro LLM, revisa el formato de respuesta.
-- **Lentitud:** Usa modelos más pequeños para desarrollo. Los modelos grandes pueden tardar varios minutos.
-- **Ollama no responde:** Asegúrate de que Ollama esté corriendo (`ollama serve`) y que el modelo esté descargado (`ollama pull llama3.2:3b`).
-
-## 📝 Scripts útiles
-
-```bash
-npm run start      # Inicia el servidor MCP
-npm run dev        # Modo desarrollo (watch)
-npm run web        # Cliente web interactivo
 npm run example    # Ejecuta todos los ejemplos del cliente LLM
 npm test           # Corre los tests de integración
 ```
