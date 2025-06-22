@@ -115,7 +115,7 @@ interface LoaderData {
   tool: MCPResponse;
 }
 
-export function Page({ loaderData }: { loaderData: LoaderData }) {
+export default function Page({ loaderData }: { loaderData: LoaderData }) {
   const { isConnected, loading, readResource, callTool } = useMCP();
   const [resourceContent, setResourceContent] = useState(
     loaderData.resource.content
@@ -164,21 +164,69 @@ export function Page({ loaderData }: { loaderData: LoaderData }) {
 }
 ```
 
-### **3. Usar clientes LLM pre-configurados**
+### **3. Usar clientes LLM pre-configurados con React Router v7 (action)**
 
 ```tsx
+// routes/llm.action.ts
+import type { ActionFunctionArgs } from "react-router";
 import { createOllamaClient, createOpenAIClient } from "react-hook-mcp";
 
-// Cliente Ollama (local)
-const ollamaClient = createOllamaClient("llama3.2:3b");
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const prompt = formData.get("prompt") as string;
 
-// Cliente OpenAI
-const openaiClient = createOpenAIClient("tu-api-key", "gpt-3.5-turbo");
+  // Cliente Ollama (local)
+  const ollamaClient = createOllamaClient("llama3.2:3b");
+  const ollamaResponse = await ollamaClient.chat([
+    { role: "user", content: prompt },
+  ]);
 
-// Usar los clientes
-const response = await ollamaClient.chat([
-  { role: "user", content: "¿Cuál es la capital de Francia?" },
-]);
+  // Cliente OpenAI
+  const openaiClient = createOpenAIClient("tu-api-key", "gpt-3.5-turbo");
+  const openaiResponse = await openaiClient.chat([
+    { role: "user", content: prompt },
+  ]);
+
+  return new Response(
+    JSON.stringify({
+      ollama: ollamaResponse,
+      openai: openaiResponse,
+    }),
+    { headers: { "Content-Type": "application/json" } }
+  );
+}
+```
+
+Y en tu componente puedes consumir la respuesta usando `useActionData`:
+
+```tsx
+// routes/llm.page.tsx
+import { Form, useActionData } from "react-router-dom";
+
+export default function LLMPage() {
+  const data = useActionData() as {
+    ollama: any;
+    openai: any;
+  };
+
+  return (
+    <div>
+      <h2>Probar LLMs pre-configurados</h2>
+      <Form method="post">
+        <input name="prompt" placeholder="Escribe tu pregunta..." />
+        <button type="submit">Enviar</button>
+      </Form>
+      {data && (
+        <div>
+          <h3>Respuesta Ollama:</h3>
+          <pre>{JSON.stringify(data.ollama, null, 2)}</pre>
+          <h3>Respuesta OpenAI:</h3>
+          <pre>{JSON.stringify(data.openai, null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  );
+}
 ```
 
 **Beneficios:**
