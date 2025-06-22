@@ -393,3 +393,25 @@ npm run web        # Cliente web interactivo
 npm run example    # Ejecuta todos los ejemplos del cliente LLM
 npm test           # Corre los tests de integración
 ```
+
+## 📦 ¡Instala el paquete en npm!
+
+¿Te gustó este proyecto? ¡Instálalo directamente desde npm!
+
+```bash
+npm install react-hook-mcp
+```
+
+### 🔗 Enlaces útiles
+
+- 📦 **[react-hook-mcp en npm](https://www.npmjs.com/package/react-hook-mcp)**
+- 🐙 **[Repositorio en GitHub](https://github.com/yourusername/mcp-sdk-experiment)**
+- 📚 **[Documentación completa](https://github.com/yourusername/mcp-sdk-experiment#readme)**
+
+### ⭐ ¡Dale una estrella!
+
+Si este proyecto te ayudó, ¡considera darle una estrella en GitHub! Esto nos motiva a seguir mejorando y agregando nuevas funcionalidades.
+
+---
+
+_Desarrollado con ❤️ por [Héctorbliss](https://github.com/yourusername)_
