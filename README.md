@@ -94,200 +94,59 @@ LLM: [Lee datos] [Ejecuta análisis] "El análisis muestra que el departamento d
 
 ## ⚛️ ¿Cómo se usa en React?
 
-Aquí te muestro cómo integrar el servidor MCP con una aplicación React para crear una interfaz interactiva:
+Aquí te muestro cómo integrar el servidor MCP con una aplicación React usando nuestro hook personalizado:
 
 ### **1. Instalar dependencias**
 
 ```bash
-npm install @modelcontextprotocol/sdk
+npm install react @types/react @modelcontextprotocol/sdk
 ```
 
-### **2. Crear un hook personalizado para MCP**
-
-```typescript
-// hooks/useMCP.ts
-import { useState, useEffect } from "react";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-
-interface MCPResponse {
-  type: "resource" | "tool";
-  content: string;
-  error?: string;
-}
-
-export function useMCP() {
-  const [client, setClient] = useState<Client | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const initClient = async () => {
-      const mcpClient = new Client({
-        name: "react-mcp-client",
-        version: "1.0.0",
-      });
-
-      const transport = new StdioClientTransport({
-        command: "npx",
-        args: ["tsx", "mcp_server.ts"],
-      });
-
-      try {
-        await mcpClient.connect(transport);
-        setClient(mcpClient);
-        setIsConnected(true);
-      } catch (error) {
-        console.error("Error connecting to MCP server:", error);
-      }
-    };
-
-    initClient();
-
-    return () => {
-      if (client) {
-        client.close();
-      }
-    };
-  }, []);
-
-  const readResource = async (uri: string): Promise<MCPResponse> => {
-    if (!client) throw new Error("MCP client not connected");
-
-    setLoading(true);
-    try {
-      const resource = await client.readResource({ uri });
-      return {
-        type: "resource",
-        content: resource.contents[0].text,
-      };
-    } catch (error) {
-      return {
-        type: "resource",
-        content: "",
-        error: error instanceof Error ? error.message : "Unknown error",
-      };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const callTool = async (name: string): Promise<MCPResponse> => {
-    if (!client) throw new Error("MCP client not connected");
-
-    setLoading(true);
-    try {
-      const result = await client.callTool({ name });
-      const content = result.content as Array<{ type: string; text: unknown }>;
-      return {
-        type: "tool",
-        content: String(content[0].text).trim(),
-      };
-    } catch (error) {
-      return {
-        type: "tool",
-        content: "",
-        error: error instanceof Error ? error.message : "Unknown error",
-      };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return {
-    isConnected,
-    loading,
-    readResource,
-    callTool,
-  };
-}
-```
-
-### **3. Componente React para interactuar con MCP**
+### **2. Usar el hook useMCP**
 
 ```tsx
-// components/MCPInterface.tsx
 import React, { useState } from "react";
-import { useMCP } from "../hooks/useMCP";
+import { useMCP } from "./hooks/useMCP";
 
 export function MCPInterface() {
   const { isConnected, loading, readResource, callTool } = useMCP();
   const [resourceContent, setResourceContent] = useState("");
   const [toolResult, setToolResult] = useState("");
-  const [error, setError] = useState("");
 
   const handleReadResource = async () => {
-    setError("");
-    try {
-      const result = await readResource("file:///hello.txt");
-      if (result.error) {
-        setError(result.error);
-      } else {
-        setResourceContent(result.content);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
+    const result = await readResource("file:///hello.txt");
+    if (!result.error) {
+      setResourceContent(result.content);
     }
   };
 
   const handleCallTool = async () => {
-    setError("");
-    try {
-      const result = await callTool("tool-pelusear");
-      if (result.error) {
-        setError(result.error);
-      } else {
-        setToolResult(result.content);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
+    const result = await callTool("tool-pelusear");
+    if (!result.error) {
+      setToolResult(result.content);
     }
   };
 
-  if (!isConnected) {
-    return (
-      <div className="mcp-interface">
-        <div className="status disconnected">
-          🔌 Conectando al servidor MCP...
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="mcp-interface">
-      <div className="status connected">✅ Conectado al servidor MCP</div>
-
-      <div className="actions">
-        <button
-          onClick={handleReadResource}
-          disabled={loading}
-          className="btn btn-primary"
-        >
-          {loading ? "⏳ Leyendo..." : "📖 Leer Recurso"}
-        </button>
-
-        <button
-          onClick={handleCallTool}
-          disabled={loading}
-          className="btn btn-secondary"
-        >
-          {loading ? "⏳ Ejecutando..." : "🔧 Ejecutar Herramienta"}
-        </button>
-      </div>
-
-      {error && <div className="error">❌ Error: {error}</div>}
+    <div>
+      <div>Estado: {isConnected ? "✅ Conectado" : "🔌 Desconectado"}</div>
+      <button onClick={handleReadResource} disabled={loading}>
+        Leer Recurso
+      </button>
+      <button onClick={handleCallTool} disabled={loading}>
+        Ejecutar Herramienta
+      </button>
 
       {resourceContent && (
-        <div className="result">
-          <h3>📄 Contenido del Recurso:</h3>
+        <div>
+          <h3>Contenido del recurso:</h3>
           <pre>{resourceContent}</pre>
         </div>
       )}
 
       {toolResult && (
-        <div className="result">
-          <h3>🔧 Resultado de la Herramienta:</h3>
+        <div>
+          <h3>Resultado de la herramienta:</h3>
           <pre>{toolResult}</pre>
         </div>
       )}
@@ -296,121 +155,59 @@ export function MCPInterface() {
 }
 ```
 
-### **4. Integrar con LLM REST API**
+### **3. Integrar con LLM**
 
 ```tsx
-// components/LLMInterface.tsx
-import React, { useState } from "react";
-import { useMCP } from "../hooks/useMCP";
-
 export function LLMInterface() {
-  const { isConnected, loading, readResource, callTool } = useMCP();
+  const { isConnected, readResource, callTool } = useMCP();
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState("");
-  const [processing, setProcessing] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim()) return;
 
-    setProcessing(true);
-    setResponse("");
+    // 1. Enviar consulta al LLM
+    const llmResponse = await fetch("/api/llm", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    });
 
-    try {
-      // 1. Enviar consulta al LLM
-      const llmResponse = await fetch("/api/llm", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
-      });
+    const llmData = await llmResponse.json();
 
-      const llmData = await llmResponse.json();
-
-      // 2. Analizar respuesta del LLM
-      const actions = analyzeLLMResponse(llmData.content);
-
-      // 3. Ejecutar acciones en MCP
-      const results = [];
-      for (const action of actions) {
-        if (action === "read_resource") {
-          const result = await readResource("file:///hello.txt");
-          results.push({ action: "Leer archivo", result: result.content });
-        } else if (action === "call_tool") {
-          const result = await callTool("tool-pelusear");
-          results.push({
-            action: "Ejecutar herramienta",
-            result: result.content,
-          });
-        }
-      }
-
-      // 4. Enviar resultados de vuelta al LLM
-      const finalResponse = await fetch("/api/llm/final", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          originalQuery: query,
-          llmResponse: llmData.content,
-          results,
-        }),
-      });
-
-      const finalData = await finalResponse.json();
-      setResponse(finalData.content);
-    } catch (error) {
-      setResponse(
-        `Error: ${error instanceof Error ? error.message : "Unknown error"}`
-      );
-    } finally {
-      setProcessing(false);
+    // 2. Ejecutar acciones en MCP basadas en la respuesta del LLM
+    const results = [];
+    if (llmData.content.includes("leer")) {
+      const result = await readResource("file:///hello.txt");
+      results.push({ action: "Leer archivo", result: result.content });
     }
-  };
-
-  const analyzeLLMResponse = (response: string): string[] => {
-    const actions: string[] = [];
-    const lowerResponse = response.toLowerCase();
-
-    if (lowerResponse.includes("leer") || lowerResponse.includes("archivo")) {
-      actions.push("read_resource");
-    }
-    if (
-      lowerResponse.includes("herramienta") ||
-      lowerResponse.includes("ejecutar")
-    ) {
-      actions.push("call_tool");
+    if (llmData.content.includes("herramienta")) {
+      const result = await callTool("tool-pelusear");
+      results.push({ action: "Ejecutar herramienta", result: result.content });
     }
 
-    return actions.length > 0 ? actions : ["read_resource", "call_tool"];
+    // 3. Generar respuesta final
+    setResponse(
+      `Acciones ejecutadas: ${results.map((r) => r.result).join(", ")}`
+    );
   };
 
   return (
-    <div className="llm-interface">
-      <div className="status">
-        {isConnected ? "✅ Conectado" : "🔌 Desconectado"}
-      </div>
-
-      <form onSubmit={handleSubmit} className="query-form">
+    <div>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="¿Qué quieres que haga? (ej: Lee el archivo y ejecuta la herramienta)"
-          disabled={processing}
-          className="query-input"
+          placeholder="¿Qué quieres que haga?"
         />
-        <button
-          type="submit"
-          disabled={processing || !isConnected}
-          className="btn btn-primary"
-        >
-          {processing ? "⏳ Procesando..." : "🚀 Enviar"}
-        </button>
+        <button type="submit">Enviar</button>
       </form>
 
       {response && (
-        <div className="response">
-          <h3>🤖 Respuesta del LLM:</h3>
-          <div className="response-content">{response}</div>
+        <div>
+          <h3>Respuesta:</h3>
+          <p>{response}</p>
         </div>
       )}
     </div>
@@ -418,196 +215,48 @@ export function LLMInterface() {
 }
 ```
 
-### **5. Estilos CSS básicos**
+### **4. Archivos disponibles**
 
-```css
-/* styles/mcp.css */
-.mcp-interface {
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin: 20px 0;
-}
+- **`hooks/useMCP.ts`** - Hook principal para conectar con MCP
+- **`hooks/useMCP.example.ts`** - Ejemplos de uso
+- **`hooks/README.md`** - Documentación completa del hook
 
-.status {
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  font-weight: bold;
-}
-
-.status.connected {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.status.disconnected {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-.actions {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  color: white;
-}
-
-.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px;
-  border-radius: 4px;
-  margin: 10px 0;
-}
-
-.result {
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  padding: 15px;
-  margin: 10px 0;
-}
-
-.result pre {
-  background-color: white;
-  padding: 10px;
-  border-radius: 4px;
-  overflow-x: auto;
-}
-
-.query-form {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.query-input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.response {
-  background-color: #e7f3ff;
-  border: 1px solid #b3d9ff;
-  border-radius: 4px;
-  padding: 15px;
-}
-
-.response-content {
-  white-space: pre-wrap;
-  line-height: 1.5;
-}
-```
-
-### **6. Uso en tu aplicación React**
-
-```tsx
-// App.tsx
-import React from "react";
-import { MCPInterface } from "./components/MCPInterface";
-import { LLMInterface } from "./components/LLMInterface";
-import "./styles/mcp.css";
-
-function App() {
-  return (
-    <div className="App">
-      <h1>🤖 MCP + React Demo</h1>
-
-      <section>
-        <h2>🔧 Interfaz MCP Directa</h2>
-        <MCPInterface />
-      </section>
-
-      <section>
-        <h2>🧠 Interfaz con LLM</h2>
-        <LLMInterface />
-      </section>
-    </div>
-  );
-}
-
-export default App;
-```
-
-### **7. API Routes (Next.js)**
+### **5. API Routes (Next.js)**
 
 ```typescript
 // pages/api/llm.ts
-import type { NextApiRequest, NextApiResponse } from "next";
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
+export default async function handler(req, res) {
   const { query } = req.body;
 
-  try {
-    const response = await fetch("http://localhost:11434/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "llama3.2:3b",
-        messages: [
-          {
-            role: "system",
-            content:
-              "Eres un asistente que puede acceder a recursos y ejecutar herramientas.",
-          },
-          {
-            role: "user",
-            content: query,
-          },
-        ],
-        stream: false,
-      }),
-    });
+  const response = await fetch("http://localhost:11434/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "llama3.2:3b",
+      messages: [
+        {
+          role: "system",
+          content:
+            "Eres un asistente que puede acceder a recursos y ejecutar herramientas.",
+        },
+        { role: "user", content: query },
+      ],
+      stream: false,
+    }),
+  });
 
-    const data = await response.json();
-    res.status(200).json({ content: data.message.content });
-  } catch (error) {
-    res.status(500).json({ error: "Error calling LLM API" });
-  }
+  const data = await response.json();
+  res.status(200).json({ content: data.message.content });
 }
 ```
 
-Esta integración te permite:
+**Beneficios:**
 
-- ✅ **Conectar React directamente** con el servidor MCP
-- ✅ **Crear interfaces interactivas** para recursos y herramientas
-- ✅ **Integrar con LLMs** para procesamiento de lenguaje natural
-- ✅ **Manejar estados de carga** y errores
-- ✅ **Crear experiencias de usuario** fluidas
+- ✅ **Hook reutilizable** para cualquier componente React
+- ✅ **Conexión automática** al servidor MCP
+- ✅ **Manejo de estados** y errores incluido
+- ✅ **Integración fácil** con LLMs
+- ✅ **TypeScript** completo
 
 ## 📦 Instalación
 
