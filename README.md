@@ -262,6 +262,9 @@ export function LLMInterface() {
 
 ### **5. API Routes (Next.js)**
 
+<details>
+<summary>Ver ejemplo de Next.js API Route</summary>
+
 ```typescript
 // pages/api/llm.ts
 export default async function handler(req, res) {
@@ -288,6 +291,127 @@ export default async function handler(req, res) {
   res.status(200).json({ content: data.message.content });
 }
 ```
+
+</details>
+
+### **6. React Router v7 (Loader/Action)**
+
+<details>
+<summary>Ver ejemplo de React Router v7</summary>
+
+```typescript
+// routes/api.llm.tsx
+import { json } from "@remix-run/node";
+import type { ActionFunctionArgs } from "@remix-run/node";
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const query = formData.get("query") as string;
+
+  const response = await fetch("http://localhost:11434/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "llama3.2:3b",
+      messages: [
+        {
+          role: "system",
+          content:
+            "Eres un asistente que puede acceder a recursos y ejecutar herramientas.",
+        },
+        { role: "user", content: query },
+      ],
+      stream: false,
+    }),
+  });
+
+  const data = await response.json();
+  return json({ content: data.message.content });
+}
+
+// routes/_index.tsx
+import { Form, useActionData } from "@remix-run/react";
+import { useMCP } from "~/hooks/useMCP";
+
+export default function Index() {
+  const { readResource, callTool } = useMCP();
+  const actionData = useActionData<typeof action>();
+
+  const handleLLMResponse = async (llmContent: string) => {
+    const results = [];
+
+    if (llmContent.includes("leer")) {
+      const result = await readResource("file:///hello.txt");
+      results.push({ action: "Leer archivo", result: result.content });
+    }
+
+    if (llmContent.includes("herramienta")) {
+      const result = await callTool("tool-pelusear");
+      results.push({ action: "Ejecutar herramienta", result: result.content });
+    }
+
+    return results;
+  };
+
+  return (
+    <div>
+      <Form method="post">
+        <input type="text" name="query" placeholder="¿Qué quieres que haga?" />
+        <button type="submit">Enviar</button>
+      </Form>
+
+      {actionData?.content && (
+        <div>
+          <h3>Respuesta del LLM:</h3>
+          <p>{actionData.content}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+</details>
+
+### **7. Hono (API Route)**
+
+<details>
+<summary>Ver ejemplo de Hono</summary>
+
+```typescript
+// api/llm.ts
+import { Hono } from "hono";
+
+const app = new Hono();
+
+app.post("/api/llm", async (c) => {
+  const { query } = await c.req.json();
+
+  const response = await fetch("http://localhost:11434/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "llama3.2:3b",
+      messages: [
+        {
+          role: "system",
+          content:
+            "Eres un asistente que puede acceder a recursos y ejecutar herramientas.",
+        },
+        { role: "user", content: query },
+      ],
+      stream: false,
+    }),
+  });
+
+  const data = await response.json();
+  return c.json({ content: data.message.content });
+});
+
+export default app;
+```
+
+</details>
 
 **Beneficios:**
 
