@@ -8,13 +8,16 @@
     "start": "tsx mcp_server.ts",
     "build": "tsc",
     "dev": "tsx --watch mcp_server.ts",
-    "test": "vitest"
+    "test": "vitest",
+    "web": "tsx web_server.ts"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.13.0"
+    "@modelcontextprotocol/sdk": "^1.13.0",
+    "ws": "^8.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@types/ws": "^8.0.0",
     "vitest": "^1.0.0",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"

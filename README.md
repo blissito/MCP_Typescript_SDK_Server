@@ -22,12 +22,28 @@ O en modo desarrollo (con watch):
 npm run dev
 ```
 
+### Cliente Web
+
+Para usar el cliente web interactivo:
+
+```bash
+npm run web
+```
+
+Luego abre tu navegador en: http://localhost:3001
+
+El cliente web te permite:
+
+- Conectar/desconectar del servidor MCP
+- Leer recursos (como `file:///hello.txt`)
+- Ejecutar herramientas (como `tool-pelusear`)
+
 ### Estructura del servidor
 
 El servidor incluye:
 
 1. **Recurso**: `file:///hello.txt` - Devuelve "Hello, World!"
-2. **Herramienta**: `hello` - Devuelve "Hello from MCP server!"
+2. **Herramienta**: `tool-pelusear` - Devuelve "¡Has sido peluseado! 🐶"
 
 ### Crear un cliente para probar
 
@@ -58,13 +74,27 @@ async function main() {
 
   // Llamar herramienta
   const result = await client.callTool({
-    name: "hello",
+    name: "tool-pelusear",
   });
   console.log("Tool result:", result.content[0].text);
 }
 
 main().catch(console.error);
 ```
+
+## Testing
+
+Ejecutar los tests de integración:
+
+```bash
+npm test
+```
+
+Los tests verifican que:
+
+- El servidor se inicia correctamente
+- Los recursos se pueden leer
+- Las herramientas se pueden ejecutar
 
 ## Características
 
@@ -74,10 +104,14 @@ main().catch(console.error);
 - ✅ Transporte stdio
 - ✅ TypeScript completo
 - ✅ Manejo de errores
+- ✅ Cliente web interactivo
+- ✅ Tests de integración
+- ✅ WebSocket proxy
 
 ## Próximos pasos
 
 - Agregar más recursos (archivos, APIs, etc.)
 - Implementar herramientas más complejas
 - Agregar autenticación
-- Crear un cliente web
+- Mejorar la interfaz web
+- Agregar más tests
