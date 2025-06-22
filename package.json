@@ -1,0 +1,29 @@
+{
+  "name": "mcp-sdk-experiment",
+  "version": "1.0.0",
+  "description": "Simple MCP server experiment",
+  "main": "mcp_server.ts",
+  "type": "module",
+  "scripts": {
+    "start": "tsx mcp_server.ts",
+    "build": "tsc",
+    "dev": "tsx --watch mcp_server.ts",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "vitest": "^1.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT"
+}
