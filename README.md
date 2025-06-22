@@ -331,12 +331,11 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 // routes/_index.tsx
-import { Form, useActionData } from "react-router";
+import { Form } from "react-router";
 import { useMCP } from "~/hooks/useMCP";
 
 export default function Index() {
   const { readResource, callTool } = useMCP();
-  const actionData = useActionData<typeof action>();
 
   const handleLLMResponse = async (llmContent: string) => {
     const results = [];
@@ -360,13 +359,6 @@ export default function Index() {
         <input type="text" name="query" placeholder="¿Qué quieres que haga?" />
         <button type="submit">Enviar</button>
       </Form>
-
-      {actionData?.content && (
-        <div>
-          <h3>Respuesta del LLM:</h3>
-          <p>{actionData.content}</p>
-        </div>
-      )}
     </div>
   );
 }
