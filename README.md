@@ -1,7 +1,7 @@
 # MCP Server & useMCP hook by Blissmo 👽
 
 1. Levanta tu ollama server
-2. Crea un action en el ervidor para user `LLMRestClient`
+2. Crea un action en el ervidor para usar `LLMRestClient`
 3. `useMCP` en tus componentes.
 4. ¡Habla con tu LLM todo lo que quieras!
 
@@ -100,7 +100,7 @@ export default function Page() {
 }
 ```
 
-## 🚀 Uso
+## 🚀 ¿Qué se incluye en este repo?
 
 ### 1. Servidor MCP Básico
 
