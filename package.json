@@ -10,7 +10,8 @@
     "dev": "tsx --watch mcp_server.ts",
     "test": "vitest",
     "web": "tsx web_server.ts",
-    "llm": "tsx llm_rest_client.ts"
+    "llm": "tsx llm_rest_client.ts",
+    "example": "tsx llm_client_example.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.13.0",

@@ -78,6 +78,7 @@ class LLMRestClient {
       ],
       max_tokens: 1000,
       temperature: 0.7,
+      stream: false, // Forzar no-streaming para compatibilidad
     };
 
     try {
@@ -92,10 +93,23 @@ class LLMRestClient {
       }
 
       const data = await response.json();
-      return {
-        content: data.choices[0].message.content,
-        usage: data.usage,
-      };
+
+      // Manejar diferentes formatos de respuesta
+      if (data.choices && data.choices[0] && data.choices[0].message) {
+        // Formato OpenAI/Anthropic
+        return {
+          content: data.choices[0].message.content,
+          usage: data.usage,
+        };
+      } else if (data.message && data.message.content) {
+        // Formato Ollama no-streaming
+        return {
+          content: data.message.content,
+          usage: data.usage,
+        };
+      } else {
+        throw new Error("Formato de respuesta no reconocido");
+      }
     } catch (error) {
       console.error("Error calling LLM API:", error);
       throw error;
@@ -195,11 +209,11 @@ class LLMRestClient {
             });
             const content = toolResult.content as Array<{
               type: string;
-              text: string;
+              text: unknown;
             }>;
             results.push({
               action: "Ejecutar herramienta tool-pelusear",
-              result: (content[0].text as string).trim(),
+              result: String(content[0].text).trim(),
             });
             break;
         }
@@ -214,44 +228,6 @@ class LLMRestClient {
     }
 
     return results;
-  }
-}
-
-// Ejemplo de uso
-async function main() {
-  // Configura tu LLM REST API aquí
-  const llmConfig: LLMConfig = {
-    apiUrl: "https://api.openai.com/v1/chat/completions", // Cambia por tu API
-    apiKey: process.env.OPENAI_API_KEY, // O tu API key
-    model: "gpt-3.5-turbo", // O tu modelo
-  };
-
-  const llmClient = new LLMRestClient(llmConfig);
-
-  try {
-    await llmClient.connect();
-
-    // Ejemplos de consultas
-    const queries = [
-      "¿Qué hay en el archivo hello.txt?",
-      "Ejecuta la herramienta de pelusear",
-      "Lee el archivo y luego ejecuta la herramienta",
-      "¿Puedes hacer ambas cosas?",
-    ];
-
-    for (const query of queries) {
-      console.log("\n" + "=".repeat(50));
-      const response = await llmClient.processUserQuery(query);
-      console.log(`\n📝 Respuesta final: ${response}`);
-      console.log("=".repeat(50));
-
-      // Pausa entre consultas
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-    }
-  } catch (error) {
-    console.error("Error:", error);
-  } finally {
-    await llmClient.disconnect();
   }
 }
 
@@ -281,11 +257,6 @@ export const LLMProviders = {
     model: model,
   }),
 };
-
-// Ejecutar si es el archivo principal
-if (require.main === module) {
-  main().catch(console.error);
-}
 
 export { LLMRestClient };
 export type { LLMConfig };

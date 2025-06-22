@@ -1,4 +1,4 @@
-# MCP Server Experiment
+# MCP Server Blissmo experiment 👽
 
 Un servidor simple de Model Context Protocol (MCP) creado con TypeScript con soporte para LLMs REST API.
 
@@ -310,3 +310,39 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 - [Anthropic](https://www.anthropic.com/) por Claude
 - [OpenAI](https://openai.com/) por GPT
 - [Ollama](https://ollama.ai/) por el modelo local
+
+## 🧪 Ejecución de Ejemplos
+
+Para correr todos los ejemplos del cliente LLM (incluyendo integración con MCP y diferentes modelos):
+
+```bash
+npm run example
+```
+
+Esto ejecutará el archivo `llm_client_example.ts` y mostrará en consola los resultados de cada ejemplo:
+
+- Ejemplo básico con Ollama
+- Ejemplo con OpenAI (si tienes API key)
+- Ejemplo de múltiples consultas
+- Ejemplo de manejo de errores
+- Ejemplo de configuración personalizada (usa un modelo ligero por defecto)
+
+**Recomendación:** Para pruebas rápidas, usa modelos ligeros de Ollama como `llama3.2:3b` o `gemma3:4b`. Los modelos grandes como `phi4:14b` pueden ser lentos.
+
+## 🛠️ Solución de Problemas
+
+- **Error 404 o 401:** Verifica que la URL y el modelo existan y que tu API key sea válida.
+- **Error de JSON o streaming:** El cliente fuerza `stream: false` para compatibilidad con Ollama. Si usas otro LLM, revisa el formato de respuesta.
+- **Lentitud:** Usa modelos más pequeños para desarrollo. Los modelos grandes pueden tardar varios minutos.
+- **Ollama no responde:** Asegúrate de que Ollama esté corriendo (`ollama serve`) y que el modelo esté descargado (`ollama pull llama3.2:3b`).
+
+## 📝 Scripts útiles
+
+```bash
+npm run start      # Inicia el servidor MCP
+npm run dev        # Modo desarrollo (watch)
+npm run web        # Cliente web interactivo
+npm run llm        # Cliente LLM REST API
+npm run example    # Ejecuta todos los ejemplos del cliente LLM
+npm test           # Corre los tests de integración
+```
