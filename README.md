@@ -316,7 +316,7 @@ export async function action({ request }: ActionFunctionArgs) {
         {
           role: "system",
           content:
-            "Eres un asistente que puede acceder a recursos y ejecutar herramientas.",
+            "Responde solo con 'leer' o 'herramienta' según lo que el usuario pida.",
         },
         { role: "user", content: query },
       ],
@@ -325,24 +325,60 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   const data = await response.json();
-  return new Response(JSON.stringify({ content: data.message.content }), {
+  return new Response(JSON.stringify({ action: data.message.content }), {
     headers: { "Content-Type": "application/json" },
   });
 }
 
 // routes/_index.tsx
-import { Form } from "react-router";
+import { Form, useActionData } from "react-router";
 import { useMCP } from "~/hooks/useMCP";
+import { useState } from "react";
 
 export default function Index() {
   const { readResource, callTool } = useMCP();
+  const actionData = useActionData<typeof action>();
+  const [result, setResult] = useState("");
+
+  // Ejecutar acción MCP cuando recibimos respuesta del LLM
+  if (actionData?.action && !result) {
+    const executeAction = async () => {
+      if (actionData.action.includes("leer")) {
+        const resource = await readResource("file:///hello.txt");
+        setResult(`📖 Leído: ${resource.content}`);
+      } else if (actionData.action.includes("herramienta")) {
+        const tool = await callTool("tool-pelusear");
+        setResult(`🔧 Herramienta: ${tool.content}`);
+      }
+    };
+    executeAction();
+  }
 
   return (
     <div>
+      <h2>MCP + React Router v7</h2>
+
       <Form method="post">
-        <input type="text" name="query" placeholder="¿Qué quieres que haga?" />
+        <input
+          type="text"
+          name="query"
+          placeholder="Pide leer un archivo o ejecutar una herramienta"
+        />
         <button type="submit">Enviar</button>
       </Form>
+
+      {actionData?.action && (
+        <div>
+          <h3>LLM dijo: {actionData.action}</h3>
+        </div>
+      )}
+
+      {result && (
+        <div>
+          <h3>Resultado MCP:</h3>
+          <p>{result}</p>
+        </div>
+      )}
     </div>
   );
 }
