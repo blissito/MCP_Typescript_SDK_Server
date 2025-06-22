@@ -247,4 +247,4 @@ Si este proyecto te ayudó, ¡considera darle una estrella en GitHub! Esto nos m
 
 ---
 
-_Desarrollado con 🤖 por [Héctorbliss](https://github.com/yourusername)_
+_Desarrollado con 🤖 por [Héctorbliss](https://github.com/blissito)_
