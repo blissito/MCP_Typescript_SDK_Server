@@ -1,41 +1,17 @@
 {
-  "name": "react-hook-mcp",
-  "version": "0.0.1",
-  "description": "React hooks and utilities for Model Context Protocol (MCP) integration",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    },
-    "./client": {
-      "types": "./dist/client.d.ts",
-      "import": "./dist/client.mjs",
-      "require": "./dist/client.js"
-    },
-    "./hooks": {
-      "types": "./dist/hooks.d.ts",
-      "import": "./dist/hooks.mjs",
-      "require": "./dist/hooks.js"
-    }
-  },
-  "files": [
-    "dist",
-    "README.md"
-  ],
+  "name": "mcp-sdk-experiment",
+  "version": "1.0.0",
+  "description": "Simple MCP server experiment",
+  "main": "mcp_server.ts",
   "type": "module",
   "scripts": {
-    "build": "tsup",
+    "start": "tsx mcp_server.ts",
+    "build": "tsc",
     "dev": "tsx --watch mcp_server.ts",
     "test": "vitest",
-    "prepublishOnly": "npm run build",
     "web": "tsx web_server.ts",
     "llm": "tsx llm_rest_client.ts",
-    "example": "tsx llm_client_example.ts",
-    "start": "tsx mcp_server.ts"
+    "example": "tsx llm_client_example.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.13.0",
@@ -43,35 +19,16 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
     "@types/ws": "^8.0.0",
-    "tsup": "^8.5.0",
+    "vitest": "^1.0.0",
     "tsx": "^4.0.0",
-    "typescript": "^5.0.0",
-    "vitest": "^1.0.0"
-  },
-  "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+    "typescript": "^5.0.0"
   },
   "keywords": [
     "mcp",
     "model-context-protocol",
-    "react",
-    "hooks",
-    "ai",
-    "llm",
-    "typescript"
+    "ai"
   ],
-  "author": "Héctorbliss <fixtergeek@gmail.com>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/yourusername/mcp-sdk-react.git"
-  },
-  "bugs": {
-    "url": "https://github.com/yourusername/mcp-sdk-react/issues"
-  },
-  "homepage": "https://github.com/yourusername/mcp-sdk-react#readme"
+  "author": "",
+  "license": "MIT"
 }
