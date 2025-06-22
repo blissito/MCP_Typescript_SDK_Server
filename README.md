@@ -301,8 +301,7 @@ export default async function handler(req, res) {
 
 ```typescript
 // routes/api.llm.tsx
-import { json } from "@remix-run/node";
-import type { ActionFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs } from "react-router";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -326,11 +325,13 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   const data = await response.json();
-  return json({ content: data.message.content });
+  return new Response(JSON.stringify({ content: data.message.content }), {
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 // routes/_index.tsx
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData } from "react-router";
 import { useMCP } from "~/hooks/useMCP";
 
 export default function Index() {
