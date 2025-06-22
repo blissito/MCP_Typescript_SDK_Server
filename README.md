@@ -162,25 +162,70 @@ export function LLMInterface() {
   const { isConnected, readResource, callTool } = useMCP();
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const callOllama = async (prompt: string) => {
+    const response = await fetch("http://localhost:11434/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "llama3.2:3b",
+        messages: [
+          {
+            role: "system",
+            content:
+              'Eres un asistente que puede acceder a recursos y ejecutar herramientas. Responde solo con "leer" si quieres leer un archivo, "herramienta" si quieres ejecutar una herramienta, o "ambos" si quieres hacer las dos cosas.',
+          },
+          { role: "user", content: prompt },
+        ],
+        stream: false,
+      }),
+    });
+
+    const data = await response.json();
+    return data.message.content.toLowerCase();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    // Ejecutar acciones en MCP basadas en la consulta
-    const results = [];
-    if (query.includes("leer")) {
-      const result = await readResource("file:///hello.txt");
-      results.push({ action: "Leer archivo", result: result.content });
-    }
-    if (query.includes("herramienta")) {
-      const result = await callTool("tool-pelusear");
-      results.push({ action: "Ejecutar herramienta", result: result.content });
-    }
+    try {
+      // 1. Enviar consulta a Ollama
+      const llmResponse = await callOllama(query);
 
-    // Generar respuesta final
-    setResponse(
-      `Acciones ejecutadas: ${results.map((r) => r.result).join(", ")}`
-    );
+      // 2. Ejecutar acciones en MCP basadas en la respuesta del LLM
+      const results = [];
+
+      if (llmResponse.includes("leer") || llmResponse.includes("ambos")) {
+        const result = await readResource("file:///hello.txt");
+        results.push({ action: "Leer archivo", result: result.content });
+      }
+
+      if (
+        llmResponse.includes("herramienta") ||
+        llmResponse.includes("ambos")
+      ) {
+        const result = await callTool("tool-pelusear");
+        results.push({
+          action: "Ejecutar herramienta",
+          result: result.content,
+        });
+      }
+
+      // 3. Generar respuesta final
+      setResponse(
+        `LLM dijo: "${llmResponse}". Acciones ejecutadas: ${results
+          .map((r) => r.result)
+          .join(", ")}`
+      );
+    } catch (error) {
+      setResponse(
+        `Error: ${error instanceof Error ? error.message : "Error desconocido"}`
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -191,8 +236,11 @@ export function LLMInterface() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="¿Qué quieres que haga?"
+          disabled={loading}
         />
-        <button type="submit">Enviar</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Procesando..." : "Enviar"}
+        </button>
       </form>
 
       {response && (
