@@ -1,16 +1,34 @@
-# Blissmo's MCP Server Experiment
+# MCP Server Experiment
 
-Un servidor simple de Model Context Protocol (MCP) creado con TypeScript.
+Un servidor simple de Model Context Protocol (MCP) creado con TypeScript con soporte para LLMs REST API.
 
-## Instalación
+## 🎯 ¿Qué es esto?
+
+Este proyecto demuestra cómo conectar un **LLM REST API** (como OpenAI, Claude, Ollama, etc.) con un **servidor MCP** para darle "superpoderes" al LLM, permitiéndole acceder a recursos y ejecutar herramientas en tu sistema.
+
+## 🏗️ Arquitectura
+
+```
+Usuario → LLM REST API → LLMRestClient → MCP Server → Recursos/Herramientas
+```
+
+### Flujo de trabajo:
+
+1. **Usuario** hace una consulta al LLM
+2. **LLM** analiza qué necesita hacer
+3. **LLMRestClient** ejecuta las acciones en el servidor MCP
+4. **MCP Server** lee recursos o ejecuta herramientas
+5. **LLM** genera una respuesta final con los resultados
+
+## 📦 Instalación
 
 ```bash
 npm install
 ```
 
-## Uso
+## 🚀 Uso
 
-### Ejecutar el servidor
+### 1. Servidor MCP Básico
 
 ```bash
 npm start
@@ -22,7 +40,7 @@ O en modo desarrollo (con watch):
 npm run dev
 ```
 
-### Cliente Web
+### 2. Cliente Web Interactivo
 
 Para usar el cliente web interactivo:
 
@@ -38,7 +56,7 @@ El cliente web te permite:
 - Leer recursos (como `file:///hello.txt`)
 - Ejecutar herramientas (como `tool-pelusear`)
 
-### Cliente LLM REST API
+### 3. Cliente LLM REST API
 
 Para conectar tu LLM REST API con el servidor MCP:
 
@@ -54,7 +72,7 @@ npm run llm
 
 #### Configuración para diferentes proveedores:
 
-**OpenAI:**
+**OpenAI (GPT):**
 
 ```bash
 export OPENAI_API_KEY="sk-..."
@@ -90,58 +108,65 @@ const config = LLMConfigs.custom(
 const client = new LLMRestClient(config);
 ```
 
-#### Flujo del LLM REST API:
+#### Ejemplo de uso con LLM:
 
-1. **Usuario hace consulta** → "Lee el archivo y ejecuta la herramienta"
-2. **LLM analiza** → Decide qué acciones necesita
-3. **MCP ejecuta** → Lee recursos y ejecuta herramientas
-4. **LLM responde** → Genera respuesta final con resultados
+```
+Usuario: "Lee el archivo y ejecuta la herramienta"
 
-### Estructura del servidor
+LLM: "Voy a leer el archivo hello.txt y luego ejecutar la herramienta de pelusear"
+
+MCP: Lee "Hello, World!" y ejecuta herramienta que responde "¡Has sido peluseado! 🐶"
+
+LLM: "Perfecto! He leído el archivo que contiene 'Hello, World!' y ejecuté la herramienta que respondió '¡Has sido peluseado! 🐶'. ¡Ha sido una experiencia completa!"
+```
+
+## 🧩 Estructura del Servidor MCP
 
 El servidor incluye:
 
 1. **Recurso**: `file:///hello.txt` - Devuelve "Hello, World!"
 2. **Herramienta**: `tool-pelusear` - Devuelve "¡Has sido peluseado! 🐶"
 
-### Crear un cliente para probar
-
-Crea un archivo `mcp_client.ts`:
+### Agregar nuevos recursos:
 
 ```typescript
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-
-const client = new Client({
-  name: "example-client",
-  version: "1.0.0",
-});
-
-const transport = new StdioClientTransport({
-  command: "npm",
-  args: ["start"],
-});
-
-async function main() {
-  await client.connect(transport);
-
-  // Leer recurso
-  const resource = await client.readResource({
-    uri: "file:///hello.txt",
-  });
-  console.log("Resource:", resource.contents[0].text);
-
-  // Llamar herramienta
-  const result = await client.callTool({
-    name: "tool-pelusear",
-  });
-  console.log("Tool result:", result.content[0].text);
-}
-
-main().catch(console.error);
+server.registerResource(
+  "mi-recurso",
+  "file:///mi-archivo.txt",
+  { title: "Mi Recurso" },
+  async () => ({
+    contents: [
+      {
+        uri: "file:///mi-archivo.txt",
+        text: "Contenido del archivo",
+        mimeType: "text/plain",
+      },
+    ],
+  })
+);
 ```
 
-## Testing
+### Agregar nuevas herramientas:
+
+```typescript
+server.registerTool(
+  "mi-herramienta",
+  {
+    title: "Mi Herramienta",
+    description: "Descripción de mi herramienta",
+  },
+  async () => ({
+    content: [
+      {
+        type: "text",
+        text: "Resultado de mi herramienta",
+      },
+    ],
+  })
+);
+```
+
+## 🧪 Testing
 
 Ejecutar los tests de integración:
 
@@ -154,26 +179,85 @@ Los tests verifican que:
 - El servidor se inicia correctamente
 - Los recursos se pueden leer
 - Las herramientas se pueden ejecutar
+- El cliente web funciona correctamente
 
-## Características
+## 📁 Estructura del Proyecto
 
-- ✅ Servidor MCP básico
-- ✅ Recurso de texto simple
-- ✅ Herramienta simple
-- ✅ Transporte stdio
-- ✅ TypeScript completo
-- ✅ Manejo de errores
-- ✅ Cliente web interactivo
-- ✅ Cliente LLM REST API
-- ✅ Tests de integración
-- ✅ WebSocket proxy
-- ✅ Soporte para múltiples proveedores LLM
+```
+mcp_sdk_experiment/
+├── mcp_server.ts              # Servidor MCP principal
+├── web_server.ts              # Servidor web + WebSocket proxy
+├── web_client.html            # Cliente web interactivo
+├── llm_rest_client.ts         # Cliente LLM REST API
+├── llm_config.ts              # Configuraciones de LLM
+├── mcp_server.integration.test.ts  # Tests de integración
+├── web_server.test.ts         # Tests del servidor web
+├── package.json
+├── tsconfig.json
+└── README.md
+```
 
-## Próximos pasos
+## 🔧 Características
 
-- Agregar más recursos (archivos, APIs, etc.)
-- Implementar herramientas más complejas
-- Agregar autenticación
-- Mejorar la interfaz web
-- Agregar más tests
-- Integrar con más proveedores LLM
+- ✅ **Servidor MCP básico** con recursos y herramientas
+- ✅ **Cliente web interactivo** con WebSocket
+- ✅ **Cliente LLM REST API** para múltiples proveedores
+- ✅ **Soporte para OpenAI, Claude, Ollama** y APIs personalizadas
+- ✅ **Tests de integración** completos
+- ✅ **TypeScript** completo con tipos
+- ✅ **Manejo de errores** robusto
+- ✅ **Documentación** detallada
+
+## 🎯 Casos de Uso
+
+### 1. **Asistente con Acceso a Archivos**
+
+```bash
+Usuario: "Lee mi archivo de configuración y dime qué puertos están abiertos"
+LLM: [Lee archivo] "Tu archivo muestra que tienes los puertos 3000, 8080 y 5432 abiertos"
+```
+
+### 2. **Herramientas de Sistema**
+
+```bash
+Usuario: "Ejecuta la herramienta de limpieza y luego lee el log"
+LLM: [Ejecuta herramienta] [Lee log] "He limpiado el sistema y el log muestra que se eliminaron 15 archivos temporales"
+```
+
+### 3. **APIs Externas**
+
+```bash
+Usuario: "Consulta el clima y luego ejecuta la herramienta de notificación"
+LLM: [Lee API clima] [Ejecuta notificación] "El clima está soleado a 25°C y he enviado la notificación"
+```
+
+## 🚀 Próximos Pasos
+
+- [ ] Agregar más recursos (APIs, bases de datos, etc.)
+- [ ] Implementar herramientas más complejas
+- [ ] Agregar autenticación y seguridad
+- [ ] Mejorar la interfaz web
+- [ ] Agregar más tests
+- [ ] Integrar con más proveedores LLM
+- [ ] Crear dashboard de monitoreo
+- [ ] Agregar persistencia de datos
+- [ ] Implementar streaming de respuestas
+
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
+
+## 🙏 Agradecimientos
+
+- [Model Context Protocol](https://modelcontextprotocol.io/) por el estándar
+- [Anthropic](https://www.anthropic.com/) por Claude
+- [OpenAI](https://openai.com/) por GPT
+- [Ollama](https://ollama.ai/) por el modelo local
