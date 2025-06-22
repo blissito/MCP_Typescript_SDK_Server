@@ -166,27 +166,18 @@ export function LLMInterface() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Enviar consulta al LLM
-    const llmResponse = await fetch("/api/llm", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query }),
-    });
-
-    const llmData = await llmResponse.json();
-
-    // 2. Ejecutar acciones en MCP basadas en la respuesta del LLM
+    // Ejecutar acciones en MCP basadas en la consulta
     const results = [];
-    if (llmData.content.includes("leer")) {
+    if (query.includes("leer")) {
       const result = await readResource("file:///hello.txt");
       results.push({ action: "Leer archivo", result: result.content });
     }
-    if (llmData.content.includes("herramienta")) {
+    if (query.includes("herramienta")) {
       const result = await callTool("tool-pelusear");
       results.push({ action: "Ejecutar herramienta", result: result.content });
     }
 
-    // 3. Generar respuesta final
+    // Generar respuesta final
     setResponse(
       `Acciones ejecutadas: ${results.map((r) => r.result).join(", ")}`
     );
