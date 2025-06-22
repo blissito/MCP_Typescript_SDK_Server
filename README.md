@@ -22,74 +22,74 @@ Usuario → LLM REST API → LLMRestClient → MCP Server → Recursos/Herramien
 
 ## 🎯 Casos de Uso
 
-### 1. **Asistente con Acceso a Archivos**
+### 1. **Gestión de Infraestructura IT**
 
 ```bash
-Usuario: "Lee mi archivo de configuración y dime qué puertos están abiertos"
-LLM: [Lee archivo] "Tu archivo muestra que tienes los puertos 3000, 8080 y 5432 abiertos"
+Usuario: "Verifica el estado de los servidores de producción y ejecuta el backup automático"
+LLM: [Lee métricas] [Ejecuta backup] "Los 12 servidores están operativos al 99.2% de rendimiento. He iniciado el backup incremental que completará en 15 minutos, liberando 2.3GB de espacio."
 ```
 
-### 2. **Herramientas de Sistema**
+### 2. **Análisis Financiero y Reportes**
 
 ```bash
-Usuario: "Ejecuta la herramienta de limpieza y luego lee el log"
-LLM: [Ejecuta herramienta] [Lee log] "He limpiado el sistema y el log muestra que se eliminaron 15 archivos temporales"
+Usuario: "Lee el reporte de ventas del Q4 y ejecuta el análisis de rentabilidad por región"
+LLM: [Lee datos] [Ejecuta análisis] "Las ventas del Q4 alcanzaron $2.4M, un incremento del 18% vs Q3. La región Norte muestra la mayor rentabilidad (34%), mientras que el Sur requiere atención con un margen del 12%."
 ```
 
-### 3. **APIs Externas**
+### 3. **Monitoreo de Aplicaciones Web**
 
 ```bash
-Usuario: "Consulta el clima y luego ejecuta la herramienta de notificación"
-LLM: [Lee API clima] [Ejecuta notificación] "El clima está soleado a 25°C y he enviado la notificación"
+Usuario: "Revisa los logs de error de la aplicación e-commerce y ejecuta el diagnóstico de rendimiento"
+LLM: [Lee logs] [Ejecuta diagnóstico] "Detecté 47 errores 500 en las últimas 24h, principalmente en el checkout. El diagnóstico revela latencia de base de datos. He optimizado las consultas críticas, reduciendo el tiempo de respuesta en un 40%."
 ```
 
-### 4. **Análisis de Datos**
+### 4. **Gestión de Base de Datos Empresarial**
 
 ```bash
-Usuario: "Lee el archivo CSV de ventas y ejecuta el análisis de tendencias"
-LLM: [Lee CSV] [Ejecuta análisis] "Las ventas han aumentado un 23% este mes, con el producto A siendo el más vendido"
+Usuario: "Analiza la base de datos de clientes y ejecuta la limpieza de datos duplicados"
+LLM: [Lee DB] [Ejecuta limpieza] "Identifiqué 1,247 registros duplicados (8.3% del total). He consolidado los datos manteniendo la información más reciente. La limpieza liberó 156MB de espacio y mejoró la integridad referencial."
 ```
 
-### 5. **Monitoreo de Servicios**
+### 5. **Seguridad y Compliance**
 
 ```bash
-Usuario: "Verifica el estado de mis servicios y ejecuta la herramienta de backup"
-LLM: [Lee estado servicios] [Ejecuta backup] "Todos los servicios están funcionando correctamente y he iniciado el backup programado"
+Usuario: "Escanea el sistema en busca de vulnerabilidades y ejecuta la actualización de parches críticos"
+LLM: [Lee reporte] [Ejecuta parches] "Encontré 3 vulnerabilidades críticas (CVE-2024-1234, CVE-2024-5678) y 7 de nivel medio. He aplicado los parches críticos y programado las actualizaciones de seguridad para las 2:00 AM."
 ```
 
-### 6. **Gestión de Base de Datos**
+### 6. **Análisis de Datos de Marketing**
 
 ```bash
-Usuario: "Consulta la base de datos de usuarios y ejecuta la limpieza de registros duplicados"
-LLM: [Lee DB] [Ejecuta limpieza] "Encontré 47 usuarios duplicados y los he consolidado correctamente"
+Usuario: "Lee los datos de campañas digitales y ejecuta el análisis de ROI por canal"
+LLM: [Lee métricas] [Ejecuta análisis] "La campaña Q4 generó $890K en ventas con un ROI del 320%. Google Ads lidera con 45% de conversiones, mientras que Facebook muestra un costo por adquisición 23% menor. Recomiendo reasignar 15% del presupuesto a Facebook."
 ```
 
-### 7. **Análisis de Logs**
+### 7. **Gestión de Contenedores y Microservicios**
 
 ```bash
-Usuario: "Lee los logs de error de hoy y ejecuta la herramienta de diagnóstico"
-LLM: [Lee logs] [Ejecuta diagnóstico] "Detecté 3 errores críticos relacionados con la conexión de red, he ejecutado el diagnóstico y está todo resuelto"
+Usuario: "Monitorea el estado de los contenedores en Kubernetes y ejecuta la limpieza de recursos"
+LLM: [Lee estado] [Ejecuta limpieza] "Tienes 47 pods ejecutándose en 8 namespaces. He identificado 12 pods huérfanos y 3 deployments con 0 réplicas. La limpieza liberó 4.2GB de almacenamiento y optimizó el uso de CPU en un 18%."
 ```
 
-### 8. **Gestión de Configuración**
+### 8. **Análisis de Logs y Troubleshooting**
 
 ```bash
-Usuario: "Lee mi archivo de configuración de red y ejecuta la herramienta de optimización"
-LLM: [Lee config] [Ejecuta optimización] "Tu configuración de red tiene algunos parámetros subóptimos, los he ajustado para mejorar el rendimiento en un 15%"
+Usuario: "Analiza los logs de la aplicación de pagos y ejecuta el diagnóstico de transacciones fallidas"
+LLM: [Lee logs] [Ejecuta diagnóstico] "En las últimas 6 horas, 23 transacciones fallaron (0.12% del total). El patrón indica timeouts en la integración con el procesador de pagos. He ajustado los timeouts y implementado retry automático, reduciendo fallas en un 85%."
 ```
 
-### 9. **Análisis de Seguridad**
+### 9. **Gestión de Configuración de Red**
 
 ```bash
-Usuario: "Escanea mi sistema en busca de vulnerabilidades y ejecuta la herramienta de parcheo"
-LLM: [Lee reporte] [Ejecuta parcheo] "Encontré 2 vulnerabilidades de seguridad de nivel medio, he aplicado los parches correspondientes"
+Usuario: "Lee la configuración de red y ejecuta la optimización de ancho de banda"
+LLM: [Lee config] [Ejecuta optimización] "La configuración actual tiene 30% de ancho de banda subutilizado. He optimizado el QoS, priorizado tráfico crítico y ajustado el rate limiting. Esto mejorará la latencia en un 25% y reducirá el uso de ancho de banda en un 15%."
 ```
 
-### 10. **Gestión de Contenedores**
+### 10. **Análisis de Datos de Recursos Humanos**
 
 ```bash
-Usuario: "Lee el estado de mis contenedores Docker y ejecuta la herramienta de limpieza"
-LLM: [Lee estado] [Ejecuta limpieza] "Tienes 5 contenedores ejecutándose y 3 detenidos, he limpiado los recursos no utilizados liberando 2GB de espacio"
+Usuario: "Lee los datos de rendimiento de empleados y ejecuta el análisis de productividad por departamento"
+LLM: [Lee datos] [Ejecuta análisis] "El análisis muestra que el departamento de Desarrollo tiene la mayor productividad (94%), mientras que Ventas requiere atención con un 78%. He identificado 3 equipos que podrían beneficiarse de capacitación adicional, proyectando un incremento del 12% en productividad."
 ```
 
 ## 📦 Instalación
