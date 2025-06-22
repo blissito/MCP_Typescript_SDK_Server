@@ -107,11 +107,20 @@ npm install react-hook-mcp
 ```tsx
 import React, { useState } from "react";
 import { useMCP } from "react-hook-mcp";
+import type { MCPResponse } from "react-hook-mcp";
 
-export function MCPInterface() {
+// Ejemplo de tipado para loaderData en React Router v7
+interface LoaderData {
+  resource: MCPResponse;
+  tool: MCPResponse;
+}
+
+export function Page({ loaderData }: { loaderData: LoaderData }) {
   const { isConnected, loading, readResource, callTool } = useMCP();
-  const [resourceContent, setResourceContent] = useState("");
-  const [toolResult, setToolResult] = useState("");
+  const [resourceContent, setResourceContent] = useState(
+    loaderData.resource.content
+  );
+  const [toolResult, setToolResult] = useState(loaderData.tool.content);
 
   const handleReadResource = async () => {
     const result = await readResource("file:///hello.txt");
