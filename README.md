@@ -238,8 +238,8 @@ npm install react-hook-mcp
 ### 🔗 Enlaces útiles
 
 - 📦 **[react-hook-mcp en npm](https://www.npmjs.com/package/react-hook-mcp)**
-- 🐙 **[Repositorio en GitHub](https://github.com/yourusername/mcp-sdk-experiment)**
-- 📚 **[Documentación completa](https://github.com/yourusername/mcp-sdk-experiment#readme)**
+- 🐙 **[Repositorio en GitHub](https://github.com/blissito/mcp-sdk-experiment)**
+- 📚 **[Documentación completa](https://github.com/blissito/mcp-sdk-experiment#readme)**
 
 ### ⭐ ¡Dale una estrella!
 
