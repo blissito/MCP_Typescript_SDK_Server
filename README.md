@@ -231,6 +231,55 @@ Usuario: "Consulta el clima y luego ejecuta la herramienta de notificación"
 LLM: [Lee API clima] [Ejecuta notificación] "El clima está soleado a 25°C y he enviado la notificación"
 ```
 
+### 4. **Análisis de Datos**
+
+```bash
+Usuario: "Lee el archivo CSV de ventas y ejecuta el análisis de tendencias"
+LLM: [Lee CSV] [Ejecuta análisis] "Las ventas han aumentado un 23% este mes, con el producto A siendo el más vendido"
+```
+
+### 5. **Monitoreo de Servicios**
+
+```bash
+Usuario: "Verifica el estado de mis servicios y ejecuta la herramienta de backup"
+LLM: [Lee estado servicios] [Ejecuta backup] "Todos los servicios están funcionando correctamente y he iniciado el backup programado"
+```
+
+### 6. **Gestión de Base de Datos**
+
+```bash
+Usuario: "Consulta la base de datos de usuarios y ejecuta la limpieza de registros duplicados"
+LLM: [Lee DB] [Ejecuta limpieza] "Encontré 47 usuarios duplicados y los he consolidado correctamente"
+```
+
+### 7. **Análisis de Logs**
+
+```bash
+Usuario: "Lee los logs de error de hoy y ejecuta la herramienta de diagnóstico"
+LLM: [Lee logs] [Ejecuta diagnóstico] "Detecté 3 errores críticos relacionados con la conexión de red, he ejecutado el diagnóstico y está todo resuelto"
+```
+
+### 8. **Gestión de Configuración**
+
+```bash
+Usuario: "Lee mi archivo de configuración de red y ejecuta la herramienta de optimización"
+LLM: [Lee config] [Ejecuta optimización] "Tu configuración de red tiene algunos parámetros subóptimos, los he ajustado para mejorar el rendimiento en un 15%"
+```
+
+### 9. **Análisis de Seguridad**
+
+```bash
+Usuario: "Escanea mi sistema en busca de vulnerabilidades y ejecuta la herramienta de parcheo"
+LLM: [Lee reporte] [Ejecuta parcheo] "Encontré 2 vulnerabilidades de seguridad de nivel medio, he aplicado los parches correspondientes"
+```
+
+### 10. **Gestión de Contenedores**
+
+```bash
+Usuario: "Lee el estado de mis contenedores Docker y ejecuta la herramienta de limpieza"
+LLM: [Lee estado] [Ejecuta limpieza] "Tienes 5 contenedores ejecutándose y 3 detenidos, he limpiado los recursos no utilizados liberando 2GB de espacio"
+```
+
 ## 🚀 Próximos Pasos
 
 - [ ] Agregar más recursos (APIs, bases de datos, etc.)
@@ -241,7 +290,7 @@ LLM: [Lee API clima] [Ejecuta notificación] "El clima está soleado a 25°C y h
 - [ ] Integrar con más proveedores LLM
 - [ ] Crear dashboard de monitoreo
 - [ ] Agregar persistencia de datos
-- [ ] Implementar streaming de respuestas
+- [ ] ⚡ Implementar streaming de respuestas
 
 ## 🤝 Contribuir
 
