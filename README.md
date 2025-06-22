@@ -409,7 +409,7 @@ app.post("/api/llm", async (c) => {
         {
           role: "system",
           content:
-            "Eres un asistente que puede acceder a recursos y ejecutar herramientas.",
+            'Responde solo con "leer" o "herramienta" según lo que el usuario pida.',
         },
         { role: "user", content: query },
       ],
@@ -418,10 +418,89 @@ app.post("/api/llm", async (c) => {
   });
 
   const data = await response.json();
-  return c.json({ content: data.message.content });
+  return c.json({ action: data.message.content });
 });
 
 export default app;
+```
+
+```tsx
+// components/LLMInterface.tsx
+import { useState } from "react";
+import { useMCP } from "~/hooks/useMCP";
+
+export function LLMInterface() {
+  const { readResource, callTool } = useMCP();
+  const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [llmResponse, setLlmResponse] = useState("");
+  const [mcpResult, setMcpResult] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setMcpResult("");
+
+    try {
+      // 1. Enviar consulta a Hono API
+      const response = await fetch("/api/llm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
+      });
+
+      const data = await response.json();
+      setLlmResponse(data.action);
+
+      // 2. Ejecutar acción MCP basada en respuesta del LLM
+      if (data.action.includes("leer")) {
+        const resource = await readResource("file:///hello.txt");
+        setMcpResult(`📖 Leído: ${resource.content}`);
+      } else if (data.action.includes("herramienta")) {
+        const tool = await callTool("tool-pelusear");
+        setMcpResult(`🔧 Herramienta: ${tool.content}`);
+      }
+    } catch (error) {
+      setMcpResult(
+        `Error: ${error instanceof Error ? error.message : "Error desconocido"}`
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <h2>MCP + Hono</h2>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Pide leer un archivo o ejecutar una herramienta"
+          disabled={loading}
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? "Procesando..." : "Enviar"}
+        </button>
+      </form>
+
+      {llmResponse && (
+        <div>
+          <h3>LLM dijo: {llmResponse}</h3>
+        </div>
+      )}
+
+      {mcpResult && (
+        <div>
+          <h3>Resultado MCP:</h3>
+          <p>{mcpResult}</p>
+        </div>
+      )}
+    </div>
+  );
+}
 ```
 
 </details>
