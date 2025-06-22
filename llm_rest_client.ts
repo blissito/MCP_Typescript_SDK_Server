@@ -199,7 +199,7 @@ class LLMRestClient {
             });
             results.push({
               action: "Leer archivo hello.txt",
-              result: resource.contents[0].text,
+              result: String(resource.contents[0].text),
             });
             break;
 
