@@ -337,22 +337,6 @@ import { useMCP } from "~/hooks/useMCP";
 export default function Index() {
   const { readResource, callTool } = useMCP();
 
-  const handleLLMResponse = async (llmContent: string) => {
-    const results = [];
-
-    if (llmContent.includes("leer")) {
-      const result = await readResource("file:///hello.txt");
-      results.push({ action: "Leer archivo", result: result.content });
-    }
-
-    if (llmContent.includes("herramienta")) {
-      const result = await callTool("tool-pelusear");
-      results.push({ action: "Ejecutar herramienta", result: result.content });
-    }
-
-    return results;
-  };
-
   return (
     <div>
       <Form method="post">
