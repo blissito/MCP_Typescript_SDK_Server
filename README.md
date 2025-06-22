@@ -155,7 +155,7 @@ export function MCPInterface() {
 }
 ```
 
-### **3. Integrar con LLM**
+### **3. Integrar con LLM Directamente (Ollama)**
 
 ```tsx
 export function LLMInterface() {
