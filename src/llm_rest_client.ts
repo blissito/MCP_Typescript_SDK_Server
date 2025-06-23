@@ -207,7 +207,7 @@ class LLMRestClient {
             const content = contents[0]?.text || "";
             results.push({
               action: "Leer archivo hello.txt",
-              result: content,
+              result: content as any,
             });
             break;
 
