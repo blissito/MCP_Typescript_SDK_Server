@@ -183,13 +183,17 @@ class LLMRestClient {
       try {
         switch (action) {
           case "read_resource":
-            const resource = await this.mcpClient.readResource({
-              uri: "file:///hello.txt",
-            });
-            results.push({
-              action: "Leer archivo hello.txt",
-              result: resource.contents[0]?.text || "",
-            });
+             const resource = await this.mcpClient.readResource({
+               uri: "file:///hello.txt",
+             });
+             const adaptedResponse: MCPResponse = {
+               type: "resource",
+               content: resource.contents[0]?.text || ""
+             };
+             results.push({
+               action: "Leer archivo hello.txt",
+               result: adaptedResponse.content
+             });
             break;
 
           case "call_tool":
