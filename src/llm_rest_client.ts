@@ -217,7 +217,7 @@ class LLMRestClient {
             });
             const toolContent = toolResult.content as Array<{
               type: string;
-              text: string;
+              text: any;
             }> || [];
             const toolText = toolContent[0]?.text || "";
             results.push({
