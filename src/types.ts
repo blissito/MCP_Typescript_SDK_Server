@@ -30,3 +30,15 @@ export interface LLMResponse {
     completion_tokens: number;
   };
 }
+
+// Tipos para MCP
+export interface MCPResourceContent {
+  uri: string;
+  text: string;
+  mimeType: string;
+}
+
+export interface MCPResponse {
+  contents: MCPResourceContent[];
+  error?: string;
+}

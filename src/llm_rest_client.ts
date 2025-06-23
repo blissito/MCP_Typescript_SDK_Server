@@ -244,4 +244,10 @@ export const LLMProviders = {
 };
 
 export { LLMRestClient };
-export type { LLMConfig };
+export type { LLMConfig, LLMResponse };
+
+// Tipos para el contenido de herramientas
+interface ToolContent {
+  type: string;
+  text: string;
+}
