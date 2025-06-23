@@ -24,7 +24,12 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "mcp_server.ts",
+    "llm_rest_client.ts",
+    "web_server.ts",
+    "llm_client_example.ts",
+    "src/types.ts"
   ],
   "scripts": {
     "build": "tsup",
