@@ -11,9 +11,17 @@ export interface MCPConfig {
   args?: string[];
 }
 
+// Tipos para LLMRestClient
 export interface LLMConfig {
-  url: string;
-  model: string;
+  apiUrl: string;
   apiKey?: string;
-  headers?: Record<string, string>;
+  model?: string;
+}
+
+export interface LLMResponse {
+  content: string;
+  usage?: {
+    prompt_tokens: number;
+    completion_tokens: number;
+  };
 }
