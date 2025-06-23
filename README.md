@@ -96,16 +96,9 @@ const incidente = await client.processQuery(
 npm install react-hook-mcp
 ```
 
-### 🤖 Integración con Servidores LLM
+### 🤖 Agente-Servidor para Phi-4
 
 **Este agente MCP es parte de la integración incluida al comprar tu propio servidor LLM Phi-4**: [https://phi4.fly.dev/](https://phi4.fly.dev/)
-
-Al adquirir tu servidor LLM personalizado, obtienes acceso completo a:
-
-- **Phi-4**: Servidor LLM personalizado con integración MCP incluida
-- **Ollama**: Para modelos locales
-- **OpenAI**: Para modelos en la nube
-- **Claude**: Para modelos de Anthropic
 
 ### Configuración con Phi-4
 
