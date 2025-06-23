@@ -85,6 +85,32 @@
         transform: none;
       }
 
+      .input-group {
+        margin-bottom: 15px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .input-group input,
+      .input-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        font-family: inherit;
+      }
+
+      .input-group textarea {
+        min-height: 80px;
+        resize: vertical;
+      }
+
       .output {
         background: #2d3748;
         color: #e2e8f0;
@@ -157,7 +183,7 @@
     <div class="container">
       <div class="header">
         <h1>🐕 MCP Web Client</h1>
-        <p>Cliente web para tu servidor MCP</p>
+        <p>Cliente web para tu servidor MCP con fixtergeek-mcp-server</p>
       </div>
 
       <div class="content">
@@ -171,6 +197,22 @@
           <button id="disconnectBtn" class="button" disabled>
             Desconectar
           </button>
+        </div>
+
+        <!-- Consultas LLM -->
+        <div class="section">
+          <h2>🤖 Consultas LLM</h2>
+          <p>Haz preguntas al LLM integrado:</p>
+          <div class="input-group">
+            <label for="queryInput">Consulta:</label>
+            <textarea id="queryInput" placeholder="Escribe tu pregunta aquí...">
+¿Qué hora es?</textarea
+            >
+          </div>
+          <button id="processQueryBtn" class="button" disabled>
+            Procesar Consulta
+          </button>
+          <div id="queryOutput" class="output">Esperando conexión...</div>
         </div>
 
         <!-- Recursos -->
@@ -210,9 +252,12 @@
           this.disconnectBtn = document.getElementById("disconnectBtn");
           this.readResourceBtn = document.getElementById("readResourceBtn");
           this.callToolBtn = document.getElementById("callToolBtn");
+          this.processQueryBtn = document.getElementById("processQueryBtn");
+          this.queryInput = document.getElementById("queryInput");
           this.connectionStatus = document.getElementById("connectionStatus");
           this.resourceOutput = document.getElementById("resourceOutput");
           this.toolOutput = document.getElementById("toolOutput");
+          this.queryOutput = document.getElementById("queryOutput");
         }
 
         bindEvents() {
@@ -222,6 +267,9 @@
             this.readResource()
           );
           this.callToolBtn.addEventListener("click", () => this.callTool());
+          this.processQueryBtn.addEventListener("click", () =>
+            this.processQuery()
+          );
         }
 
         updateStatus(status, message) {
@@ -240,8 +288,8 @@
             this.updateStatus("connecting", "🔄 Conectando...");
             this.connectBtn.disabled = true;
 
-            // Conectar al WebSocket proxy
-            this.ws = new WebSocket("ws://localhost:3001");
+            // Conectar al WebSocket proxy (puerto 3000)
+            this.ws = new WebSocket("ws://localhost:3000");
 
             this.ws.onopen = () => {
               console.log("WebSocket conectado");
@@ -275,6 +323,7 @@
               this.disconnectBtn.disabled = true;
               this.readResourceBtn.disabled = true;
               this.callToolBtn.disabled = true;
+              this.processQueryBtn.disabled = true;
             };
           } catch (error) {
             this.updateStatus("disconnected", "❌ Error de conexión");
@@ -292,8 +341,10 @@
               this.disconnectBtn.disabled = false;
               this.readResourceBtn.disabled = false;
               this.callToolBtn.disabled = false;
+              this.processQueryBtn.disabled = false;
               this.log(this.resourceOutput, data.message);
               this.log(this.toolOutput, data.message);
+              this.log(this.queryOutput, data.message);
               break;
 
             case "disconnected":
@@ -303,24 +354,29 @@
               this.disconnectBtn.disabled = true;
               this.readResourceBtn.disabled = true;
               this.callToolBtn.disabled = true;
+              this.processQueryBtn.disabled = true;
               this.log(this.resourceOutput, data.message);
               this.log(this.toolOutput, data.message);
+              this.log(this.queryOutput, data.message);
               break;
 
             case "resourceRead":
               this.log(this.resourceOutput, "✅ Recurso leído exitosamente:");
-              this.log(
-                this.resourceOutput,
-                `   URI: ${data.data.contents[0].uri}`
-              );
-              this.log(
-                this.resourceOutput,
-                `   Contenido: "${data.data.contents[0].text}"`
-              );
-              this.log(
-                this.resourceOutput,
-                `   Tipo: ${data.data.contents[0].mimeType}`
-              );
+              if (data.data && data.data.data) {
+                this.log(
+                  this.resourceOutput,
+                  `   Contenido: "${data.data.data.content}"`
+                );
+                this.log(
+                  this.resourceOutput,
+                  `   Tipo: ${data.data.data.mimeType}`
+                );
+              } else {
+                this.log(
+                  this.resourceOutput,
+                  `   Respuesta: ${JSON.stringify(data.data, null, 2)}`
+                );
+              }
               break;
 
             case "toolCalled":
@@ -328,15 +384,42 @@
                 this.toolOutput,
                 "✅ Herramienta ejecutada exitosamente:"
               );
-              this.log(
-                this.toolOutput,
-                `   Respuesta: "${data.data.content[0].text.trim()}"`
-              );
+              if (data.data && data.data.data && data.data.data.result) {
+                this.log(
+                  this.toolOutput,
+                  `   Respuesta: "${data.data.data.result.message}"`
+                );
+                this.log(
+                  this.toolOutput,
+                  `   Timestamp: ${data.data.data.result.timestamp}`
+                );
+              } else {
+                this.log(
+                  this.toolOutput,
+                  `   Respuesta: ${JSON.stringify(data.data, null, 2)}`
+                );
+              }
+              break;
+
+            case "queryProcessed":
+              this.log(this.queryOutput, "✅ Consulta procesada exitosamente:");
+              if (data.data && data.data.content) {
+                this.log(
+                  this.queryOutput,
+                  `   Respuesta LLM: "${data.data.content}"`
+                );
+              } else {
+                this.log(
+                  this.queryOutput,
+                  `   Respuesta: ${JSON.stringify(data.data, null, 2)}`
+                );
+              }
               break;
 
             case "error":
               this.log(this.resourceOutput, `❌ Error: ${data.message}`);
               this.log(this.toolOutput, `❌ Error: ${data.message}`);
+              this.log(this.queryOutput, `❌ Error: ${data.message}`);
               break;
           }
         }
@@ -385,12 +468,39 @@
               JSON.stringify({
                 type: "callTool",
                 name: "tool-pelusear",
+                params: { timestamp: new Date().toISOString() },
               })
             );
           } catch (error) {
             this.log(
               this.toolOutput,
               `❌ Error al ejecutar herramienta: ${error.message}`
+            );
+          }
+        }
+
+        async processQuery() {
+          if (!this.connected || !this.ws) return;
+
+          const query = this.queryInput.value.trim();
+          if (!query) {
+            this.log(this.queryOutput, "❌ Por favor, escribe una consulta");
+            return;
+          }
+
+          try {
+            this.log(this.queryOutput, `🤖 Procesando consulta: "${query}"`);
+
+            this.ws.send(
+              JSON.stringify({
+                type: "processQuery",
+                query: query,
+              })
+            );
+          } catch (error) {
+            this.log(
+              this.queryOutput,
+              `❌ Error al procesar consulta: ${error.message}`
             );
           }
         }

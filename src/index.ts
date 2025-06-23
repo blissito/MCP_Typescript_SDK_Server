@@ -17,8 +17,6 @@
  */
 
 // Client-side tools
-import './polyfills';
-
 // Exportar componentes principales
 export { useMCP } from './hooks/useMCP';
 export { MCPHttpClient } from './hooks/http_client';

@@ -2,10 +2,9 @@ import { createServer } from "http";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { WebSocketServer } from "ws";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
-const PORT = 3001;
+const PORT = 3000;
+const MCP_SERVER_URL = "http://localhost:3001";
 
 export class MCPWebServer {
   static start() {
@@ -13,8 +12,7 @@ export class MCPWebServer {
   }
   private server: any;
   private wss: WebSocketServer;
-  private mcpClient: Client | null = null;
-  private mcpTransport: StdioClientTransport | null = null;
+  private isConnected: boolean = false;
 
   constructor() {
     this.server = createServer(this.handleRequest.bind(this));
@@ -25,6 +23,7 @@ export class MCPWebServer {
   private init() {
     console.log(`🚀 Servidor web iniciado en puerto ${PORT}`);
     console.log(`📱 Cliente web disponible en: http://localhost:${PORT}`);
+    console.log(`🔗 Conectando a MCP server en: ${MCP_SERVER_URL}`);
 
     this.wss.on("connection", (ws) => {
       console.log("🔌 Cliente web conectado");
@@ -83,7 +82,10 @@ export class MCPWebServer {
         await this.readResource(ws, data.uri);
         break;
       case "callTool":
-        await this.callTool(ws, data.name);
+        await this.callTool(ws, data.name, data.params);
+        break;
+      case "processQuery":
+        await this.processQuery(ws, data.query);
         break;
       default:
         ws.send(
@@ -99,21 +101,14 @@ export class MCPWebServer {
     try {
       console.log("🔄 Conectando al servidor MCP...");
 
-      // Crear cliente MCP
-      this.mcpClient = new Client({
-        name: "web-proxy-client",
-        version: "1.0.0",
-      });
+      // Verificar que el servidor MCP esté disponible
+      const response = await fetch(`${MCP_SERVER_URL}/`);
 
-      // Crear transporte stdio que ejecutará nuestro servidor
-      this.mcpTransport = new StdioClientTransport({
-        command: "npx",
-        args: ["tsx", "mcp_server.ts"],
-      });
+      if (!response.ok) {
+        throw new Error(`MCP server not available: ${response.status}`);
+      }
 
-      // Conectar al servidor MCP
-      await this.mcpClient.connect(this.mcpTransport);
-
+      this.isConnected = true;
       console.log("✅ Conectado al servidor MCP");
 
       ws.send(
@@ -124,6 +119,7 @@ export class MCPWebServer {
       );
     } catch (error) {
       console.error("❌ Error conectando al servidor MCP:", error);
+      this.isConnected = false;
       ws.send(
         JSON.stringify({
           type: "error",
@@ -137,12 +133,8 @@ export class MCPWebServer {
 
   private async disconnectFromMCPServer(ws: any) {
     try {
-      if (this.mcpClient) {
-        await this.mcpClient.close();
-        this.mcpClient = null;
-        this.mcpTransport = null;
-        console.log("🔌 Desconectado del servidor MCP");
-      }
+      this.isConnected = false;
+      console.log("🔌 Desconectado del servidor MCP");
 
       ws.send(
         JSON.stringify({
@@ -165,12 +157,21 @@ export class MCPWebServer {
 
   private async readResource(ws: any, uri: string) {
     try {
-      if (!this.mcpClient) {
+      if (!this.isConnected) {
         throw new Error("No conectado al servidor MCP");
       }
 
       console.log(`📖 Leyendo recurso: ${uri}`);
-      const resource = await this.mcpClient.readResource({ uri });
+
+      const response = await fetch(
+        `${MCP_SERVER_URL}/resource?uri=${encodeURIComponent(uri)}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const resource = await response.json();
 
       ws.send(
         JSON.stringify({
@@ -191,19 +192,35 @@ export class MCPWebServer {
     }
   }
 
-  private async callTool(ws: any, name: string) {
+  private async callTool(ws: any, name: string, params?: any) {
     try {
-      if (!this.mcpClient) {
+      if (!this.isConnected) {
         throw new Error("No conectado al servidor MCP");
       }
 
       console.log(`🛠️ Llamando herramienta: ${name}`);
-      const result = await this.mcpClient.callTool({ name });
+
+      const response = await fetch(`${MCP_SERVER_URL}/tool`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tool: name,
+          params: params || {},
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const toolResult = await response.json();
 
       ws.send(
         JSON.stringify({
           type: "toolCalled",
-          data: result,
+          data: toolResult,
         })
       );
     } catch (error) {
@@ -218,7 +235,52 @@ export class MCPWebServer {
       );
     }
   }
+
+  private async processQuery(ws: any, query: string) {
+    try {
+      if (!this.isConnected) {
+        throw new Error("No conectado al servidor MCP");
+      }
+
+      console.log(`🤖 Procesando consulta: ${query}`);
+
+      const response = await fetch(`${MCP_SERVER_URL}/query`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: query,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const queryResult = await response.json();
+
+      ws.send(
+        JSON.stringify({
+          type: "queryProcessed",
+          data: queryResult,
+        })
+      );
+    } catch (error) {
+      console.error("❌ Error procesando consulta:", error);
+      ws.send(
+        JSON.stringify({
+          type: "error",
+          message: `Error procesando consulta: ${
+            error instanceof Error ? error.message : "Error desconocido"
+          }`,
+        })
+      );
+    }
+  }
 }
 
 // Iniciar el servidor web
-new MCPWebServer();
+if (require.main === module) {
+  MCPWebServer.start();
+}

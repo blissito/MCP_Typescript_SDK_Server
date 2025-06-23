@@ -29,27 +29,34 @@
   ],
   "scripts": {
     "build": "tsup",
-    "dev": "tsx --watch mcp_server.ts",
+    "dev": "concurrently \"tsx --watch server.ts\" \"tsx web_server.ts\"",
+    "start": "concurrently \"tsx server.ts\" \"tsx web_server.ts\"",
+    "start:mcp": "tsx server.ts",
     "test": "vitest",
+    "test:unit": "vitest test/unit.test.ts test/simple.test.ts",
+    "test:integration": "INTEGRATION_TESTS=true vitest test/integration.test.ts",
+    "test:all": "INTEGRATION_TESTS=true vitest",
     "prepublishOnly": "npm run build",
     "web": "tsx web_server.ts",
     "llm": "tsx llm_rest_client.ts",
-    "example": "tsx llm_client_example.ts",
-    "start": "tsx mcp_server.ts"
+    "example": "tsx llm_client_example.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.13.0",
-    "ws": "^8.0.0"
+    "fixtergeek-mcp-server": "^0.0.7"
   },
   "devDependencies": {
     "@types/node": "^20.19.1",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.5",
     "@types/ws": "^8.5.12",
+    "concurrently": "^9.2.0",
+    "node-fetch": "^3.3.2",
     "tsup": "^8.0.1",
-    "typescript": "^5.5.3",
     "tsx": "^4.19.1",
-    "vitest": "^0.34.4"
+    "typescript": "^5.5.3",
+    "vitest": "^0.34.4",
+    "ws": "^8.18.2"
   },
   "peerDependencies": {
     "react": ">=16.8.0",
@@ -66,10 +73,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/mcp-sdk-experiment.git"
+    "url": "https://github.com/blissito/mcp-sdk-experiment.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/mcp-sdk-experiment/issues"
+    "url": "https://github.com/blissito/mcp-sdk-experiment/issues"
   },
-  "homepage": "https://github.com/yourusername/mcp-sdk-experiment#readme"
+  "homepage": "https://github.com/blissito/mcp-sdk-experiment#readme"
 }
