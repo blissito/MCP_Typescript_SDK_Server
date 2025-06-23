@@ -423,22 +423,6 @@ main();
 
 ## Ejemplos de uso
 
-### Consultar al LLM
-
-```typescript
-// Consultar al LLM
-const respuesta = await client.processUserQuery(
-  "¿Qué hay en el archivo hello.txt?"
-);
-
-// Manejar la respuesta
-if (respuesta) {
-  console.log(respuesta);
-} else {
-  console.error("No se recibió respuesta");
-}
-```
-
 ## 🎯 Características Principales
 
 - 🤖 **Integración con LLMs**
