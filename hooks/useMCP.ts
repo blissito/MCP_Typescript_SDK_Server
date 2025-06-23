@@ -8,8 +8,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { MCPHttpClient } from "../src/http_client";
 
 interface MCPResponse {
   type: "resource" | "tool";
@@ -20,29 +19,29 @@ interface MCPResponse {
 interface MCPStatus {
   isConnected: boolean;
   loading: boolean;
-  client: "connected" | "disconnected";
+  client: string;
 }
 
-export function useMCP() {
-  const [client, setClient] = useState<Client | null>(null);
+interface MCPHookResult {
+  isConnected: boolean;
+  loading: boolean;
+  readResource: (uri: string) => Promise<MCPResponse>;
+  callTool: (name: string) => Promise<MCPResponse>;
+  processQuery: (query: string) => Promise<MCPResponse>;
+  getStatus: () => MCPStatus;
+  disconnect: () => Promise<void>;
+}
+
+export function useMCP(): MCPHookResult {
+  const [client, setClient] = useState<MCPHttpClient | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const initClient = async () => {
-      const mcpClient = new Client({
-        name: "react-mcp-client",
-        version: "1.0.0",
-      });
-
-      const transport = new StdioClientTransport({
-        command: "npx",
-        args: ["tsx", "mcp_server.ts"],
-      });
-
       try {
-        await mcpClient.connect(transport);
-        setClient(mcpClient);
+        const httpClient = new MCPHttpClient();
+        setClient(httpClient);
         setIsConnected(true);
         console.log("✅ MCP Client conectado desde React");
       } catch (error) {
@@ -55,8 +54,8 @@ export function useMCP() {
 
     return () => {
       if (client) {
-        client.close();
-        console.log("🔌 MCP Client desconectado desde React");
+        // No necesitamos desconectar el cliente HTTP
+        setIsConnected(false);
       }
     };
   }, []);
@@ -66,14 +65,27 @@ export function useMCP() {
 
     setLoading(true);
     try {
-      const resource = await client.readResource({ uri });
-      return {
-        type: "resource",
-        content: resource.contents[0].text,
-      };
+      return await client.readResource(uri);
     } catch (error) {
       return {
         type: "resource",
+        content: "",
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const processQuery = async (query: string): Promise<MCPResponse> => {
+    if (!client) throw new Error("MCP client not connected");
+
+    setLoading(true);
+    try {
+      return await client.processQuery(query);
+    } catch (error) {
+      return {
+        type: "tool",
         content: "",
         error: error instanceof Error ? error.message : "Unknown error",
       };
@@ -87,12 +99,7 @@ export function useMCP() {
 
     setLoading(true);
     try {
-      const result = await client.callTool({ name });
-      const content = result.content as Array<{ type: string; text: unknown }>;
-      return {
-        type: "tool",
-        content: String(content[0].text).trim(),
-      };
+      return await client.callTool(name);
     } catch (error) {
       return {
         type: "tool",
@@ -104,21 +111,14 @@ export function useMCP() {
     }
   };
 
-  const getStatus = (): MCPStatus => {
-    return {
-      isConnected,
-      loading,
-      client: client ? "connected" : "disconnected",
-    };
-  };
+  const getStatus = () => ({
+    isConnected,
+    loading,
+    client: isConnected ? "connected" : "disconnected"
+  });
 
   const disconnect = async () => {
-    if (client) {
-      await client.close();
-      setClient(null);
-      setIsConnected(false);
-      console.log("🔌 MCP Client desconectado manualmente");
-    }
+    setIsConnected(false);
   };
 
   return {
@@ -126,7 +126,8 @@ export function useMCP() {
     loading,
     readResource,
     callTool,
+    processQuery,
     getStatus,
-    disconnect,
+    disconnect
   };
 }

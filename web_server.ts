@@ -7,7 +7,10 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 
 const PORT = 3001;
 
-class MCPWebServer {
+export class MCPWebServer {
+  static start() {
+    return new MCPWebServer();
+  }
   private server: any;
   private wss: WebSocketServer;
   private mcpClient: Client | null = null;
