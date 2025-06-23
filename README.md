@@ -1,4 +1,4 @@
-# React Hook MCP
+# React Hook MCP 🏗️
 
 SDK para interactuar con el Model Context Protocol (MCP) tanto en el cliente como en el servidor.
 
@@ -437,25 +437,6 @@ if (respuesta) {
 } else {
   console.error("No se recibió respuesta");
 }
-```
-
-## 👥 Casos de Uso
-
-```typescript
-// Monitoreo de Servidores
-const respuesta = await client.processUserQuery(
-  "Verifica el estado de los servidores"
-);
-
-// Análisis Financiero
-const respuesta = await client.processUserQuery(
-  "Analiza el reporte de ventas del Q4"
-);
-
-// Seguridad
-const respuesta = await client.processUserQuery(
-  "Escanea el sistema en busca de vulnerabilidades"
-);
 ```
 
 ## 🎯 Características Principales
