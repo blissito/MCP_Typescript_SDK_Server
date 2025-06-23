@@ -183,18 +183,14 @@ class LLMRestClient {
       try {
         switch (action) {
           case "read_resource":
-              const resource = await this.mcpClient.readResource({
-                uri: "file:///hello.txt",
-              });
-              const resourceContent = resource.contents?.[0]?.text || "";
-              const adaptedResponse: MCPResponse = {
-                type: "resource",
-                content: resourceContent
-              };
-              results.push({
-                action: "Leer archivo hello.txt",
-                result: resourceContent
-             });
+            const resource = await this.mcpClient.readResource({
+              uri: "file:///hello.txt",
+            });
+            const content = resource.contents?.[0]?.text || "";
+            results.push({
+              action: "Leer archivo hello.txt",
+              result: content,
+            });
             break;
 
           case "call_tool":
@@ -203,11 +199,12 @@ class LLMRestClient {
             });
             const toolContent = toolResult.content as Array<{
               type: string;
-              text: unknown;
-            }>;
+              text: string;
+            }> || [];
+            const toolText = toolContent[0]?.text || "";
             results.push({
               action: "Ejecutar herramienta tool-pelusear",
-              result: String(toolContent[0].text).trim(),
+              result: toolText.trim(),
             });
             break;
         }
