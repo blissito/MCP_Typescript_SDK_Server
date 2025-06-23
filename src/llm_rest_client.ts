@@ -82,22 +82,39 @@ class LLMRestClient {
       }
 
       const data = await response.json();
+      console.log("Raw LLM Response:", data); // Debug log
 
       // Manejar diferentes formatos de respuesta
-      if (data.choices && data.choices[0] && data.choices[0].message) {
+      if (data.choices && Array.isArray(data.choices) && data.choices[0] && data.choices[0].message) {
         // Formato OpenAI/Anthropic
+        const content = data.choices[0].message.content || "";
         return {
-          content: data.choices[0].message.content,
-          usage: data.usage,
+          content: typeof content === 'string' ? content : JSON.stringify(content),
+          usage: data.usage || { prompt_tokens: 0, completion_tokens: 0 },
         };
-      } else if (data.message && data.message.content) {
+      } else if (data.message && typeof data.message === 'object' && data.message.content !== undefined) {
         // Formato Ollama no-streaming
+        const content = data.message.content;
         return {
-          content: data.message.content,
-          usage: data.usage,
+          content: typeof content === 'string' ? content : JSON.stringify(content),
+          usage: data.usage || { prompt_tokens: 0, completion_tokens: 0 },
+        };
+      } else if (typeof data === 'string') {
+        // Respuesta directa como string
+        return {
+          content: data,
+          usage: { prompt_tokens: 0, completion_tokens: 0 },
         };
       } else {
-        throw new Error("Formato de respuesta no reconocido");
+        // Si no reconocemos el formato, intentamos convertir a string
+        try {
+          return {
+            content: JSON.stringify(data),
+            usage: { prompt_tokens: 0, completion_tokens: 0 },
+          };
+        } catch {
+          throw new Error("Error al procesar la respuesta del LLM");
+        }
       }
     } catch (error) {
       console.error("Error calling LLM API:", error);
@@ -186,7 +203,8 @@ class LLMRestClient {
             const resource = await this.mcpClient.readResource({
               uri: "file:///hello.txt",
             });
-            const content = resource.contents?.[0]?.text || "";
+            const contents = resource.contents || [];
+            const content = contents[0]?.text || "";
             results.push({
               action: "Leer archivo hello.txt",
               result: content,
