@@ -12,8 +12,14 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   treeshake: true,
-  external: ["react", "react-dom"],
+  external: ["react", "react-dom", "process"],
   outDir: "dist",
-  target: "node16",
+  target: "esnext",
   minify: false,
+  platform: "browser",
+  define: {
+    "process.env.NODE_ENV": JSON.stringify("production"),
+    "process.env": "undefined",
+    "process": "undefined"
+  }
 });
