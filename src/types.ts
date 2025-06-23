@@ -18,9 +18,12 @@ export interface MCPConfig {
 
 // Tipos para LLMRestClient
 export interface LLMConfig {
-  apiUrl: string;
-  apiKey?: string;
+  // URL de la API (puede ser apiUrl o url)
+  url?: string;
+  apiUrl?: string;
   model?: string;
+  apiKey?: string;
+  headers?: Record<string, string>;
 }
 
 export interface LLMResponse {

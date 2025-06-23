@@ -67,7 +67,11 @@ class LLMRestClient {
     };
 
     try {
-      const response = await fetch(this.config.apiUrl, {
+      const url = this.config.apiUrl || this.config.url;
+    if (!url) {
+      throw new Error("URL de la API no especificada");
+    }
+    const response = await fetch(url, {
         method: "POST",
         headers,
         body: JSON.stringify(body),

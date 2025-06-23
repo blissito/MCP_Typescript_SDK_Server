@@ -17,7 +17,11 @@ export class LLMClient {
       headers["Authorization"] = `Bearer ${this.config.apiKey}`;
     }
 
-    const response = await fetch(this.config.url, {
+    const url = this.config.apiUrl || this.config.url;
+    if (!url) {
+      throw new Error("URL de la API no especificada");
+    }
+    const response = await fetch(url, {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -38,14 +42,14 @@ export class LLMClient {
 // Pre-configured clients for common providers
 export const createOllamaClient = (model = "llama3.2:3b") => {
   return new LLMClient({
-    url: "http://localhost:11434/api/chat",
+    apiUrl: "http://localhost:11434/api/chat",
     model,
   });
 };
 
 export const createOpenAIClient = (apiKey: string, model = "gpt-3.5-turbo") => {
   return new LLMClient({
-    url: "https://api.openai.com/v1/chat/completions",
+    apiUrl: "https://api.openai.com/v1/chat/completions",
     model,
     apiKey,
   });
