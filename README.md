@@ -96,6 +96,36 @@ const incidente = await client.processQuery(
 npm install react-hook-mcp
 ```
 
+### 🤖 Integración con Servidores LLM
+
+**Este agente MCP es parte de la integración incluida al comprar tu propio servidor LLM Phi-4**: [https://phi4.fly.dev/](https://phi4.fly.dev/)
+
+Al adquirir tu servidor LLM personalizado, obtienes acceso completo a:
+
+- **Phi-4**: Servidor LLM personalizado con integración MCP incluida
+- **Ollama**: Para modelos locales
+- **OpenAI**: Para modelos en la nube
+- **Claude**: Para modelos de Anthropic
+
+### Configuración con Phi-4
+
+Para usar con tu servidor Phi-4 (incluido en tu compra):
+
+```typescript
+import { createMCPServer } from "fixtergeek-mcp-server";
+
+const server = createMCPServer({
+  port: 3001,
+  logLevel: "info",
+  llm: {
+    provider: "custom",
+    baseUrl: "https://phi4.fly.dev/",
+    model: "phi-4",
+    temperature: 0.7,
+  },
+});
+```
+
 ## 🏗️ Arquitectura
 
 Este proyecto utiliza el paquete `fixtergeek-mcp-server` como base para el servidor MCP, proporcionando:
@@ -439,42 +469,6 @@ main();
 - ✅ **Documentación detallada**
 - ✅ **Tests de integración** completos
 - 🚀 **Basado en fixtergeek-mcp-server**
-
-## 🎯 Ejemplo de uso en React
-
-```typescript
-// 1. Instalar
-npm install react-hook-mcp
-
-// 2. Usar el hook useMCP
-import { useMCP } from "react-hook-mcp";
-
-export default function Page() {
-  const { isConnected, loading, readResource, callTool } = useMCP();
-
-  const handleReadResource = async () => {
-    const result = await readResource("file:///hello.txt");
-    console.log(result.content);
-  };
-
-  const handleCallTool = async () => {
-    const result = await callTool("tool-pelusear");
-    console.log(result.content);
-  };
-
-  return (
-    <div>
-      <div>Estado: {isConnected ? "✅ Conectado" : "🔌 Desconectado"}</div>
-      <button onClick={handleReadResource} disabled={loading}>
-        Leer Recurso
-      </button>
-      <button onClick={handleCallTool} disabled={loading}>
-        Ejecutar Herramienta
-      </button>
-    </div>
-  );
-}
-```
 
 ## 🚀 ¿Qué se incluye en este repo?
 
