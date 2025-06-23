@@ -14,17 +14,24 @@ npm install react-hook-mcp
 ## 🚀 Quick Start
 
 ```typescript
-// 1. Importar el cliente
-import { LLMRestClient } from 'react-hook-mcp';
+// 1. Importar la clase y sus tipos
+import { LLMRestClient, LLMConfig, LLMResponse } from 'react-hook-mcp';
 
-// 2. Configurar y usar con Ollama
+// 2. Configurar el cliente con Ollama
 const client = new LLMRestClient({
   apiUrl: "http://localhost:11434/api/chat",
   model: "llama3.2:3b"
-});
+} as LLMConfig);
 
-// 3. Consultar
+// 3. Consultar al LLM
 const respuesta = await client.processUserQuery("¿Qué hay en el archivo hello.txt?");
+
+// 4. Manejar la respuesta
+if (respuesta) {
+  console.log(respuesta);
+} else {
+  console.error("No se recibió respuesta");
+}
 ```
 
 ## 👥 Casos de Uso

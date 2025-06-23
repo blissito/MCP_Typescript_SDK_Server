@@ -191,7 +191,7 @@ class LLMRestClient {
   }
 
   // Ejecutar las acciones determinadas
-  private async executeActions(
+  public async executeActions(
     actions: string[]
   ): Promise<Array<{ action: string; result: string }>> {
     const results: Array<{ action: string; result: string }> = [];
@@ -200,29 +200,18 @@ class LLMRestClient {
       try {
         switch (action) {
           case "read_resource":
-            const resource = await this.mcpClient.readResource({
-              uri: "file:///hello.txt",
-            });
-            const contents = resource.contents || [];
-            const content = contents[0]?.text || "";
+            const resource = await this.readResource("file:///hello.txt");
             results.push({
               action: "Leer archivo hello.txt",
-              result: content as any,
+              result: resource.content as any,
             });
             break;
 
           case "call_tool":
-            const toolResult = await this.mcpClient.callTool({
-              name: "tool-pelusear",
-            });
-            const toolContent = toolResult.content as Array<{
-              type: string;
-              text: any;
-            }> || [];
-            const toolText = toolContent[0]?.text || "";
+            const toolResult = await this.callTool("tool-pelusear");
             results.push({
               action: "Ejecutar herramienta tool-pelusear",
-              result: toolText.trim(),
+              result: toolResult.content.trim(),
             });
             break;
         }
@@ -237,6 +226,34 @@ class LLMRestClient {
     }
 
     return results;
+  }
+
+  // Leer un recurso MCP
+  public async readResource(uri: string): Promise<MCPResponse> {
+    const resource = await this.mcpClient.readResource({ uri });
+    const contents = resource.contents || [];
+    const content = contents[0]?.text || "";
+    return {
+      type: "resource",
+      content: String(content) // Convertir explícitamente a string
+    };
+  }
+
+  // Ejecutar una herramienta MCP
+  public async callTool(name: string): Promise<MCPResponse> {
+    const toolResult = await this.mcpClient.callTool({ name });
+    const toolContent = (toolResult.content as Array<{
+      type: string;
+      text: any;
+    }> || []).map(item => ({
+      type: item.type,
+      text: String(item.text || "")
+    }));
+    const toolText = toolContent[0]?.text || "";
+    return {
+      type: "tool",
+      content: String(toolText.trim()) // Convertir explícitamente a string
+    };
   }
 }
 
