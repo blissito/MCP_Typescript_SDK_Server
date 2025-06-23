@@ -1,6 +1,6 @@
 {
   "name": "react-hook-mcp",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "React hooks and utilities for Model Context Protocol (MCP) integration",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -38,8 +38,6 @@
     "start": "tsx mcp_server.ts"
   },
   "dependencies": {
-    "whatwg-fetch": "^3.6.2",
-    "es6-promise": "^4.3.1",
     "@modelcontextprotocol/sdk": "^1.13.0",
     "ws": "^8.0.0"
   },
