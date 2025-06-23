@@ -100,25 +100,6 @@ npm install react-hook-mcp
 
 **Este agente MCP es parte de la integración incluida al comprar tu propio servidor LLM Phi-4**: [https://phi4.fly.dev/](https://phi4.fly.dev/)
 
-### Configuración con Phi-4
-
-Para usar con tu servidor Phi-4 (incluido en tu compra):
-
-```typescript
-import { createMCPServer } from "fixtergeek-mcp-server";
-
-const server = createMCPServer({
-  port: 3001,
-  logLevel: "info",
-  llm: {
-    provider: "custom",
-    baseUrl: "https://phi4.fly.dev/",
-    model: "phi-4",
-    temperature: 0.7,
-  },
-});
-```
-
 ## 🏗️ Arquitectura
 
 Este proyecto utiliza el paquete `fixtergeek-mcp-server` como base para el servidor MCP, proporcionando:
