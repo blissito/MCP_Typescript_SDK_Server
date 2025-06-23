@@ -1,6 +1,6 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import { LLMConfig, LLMResponse } from "./types";
+import { LLMConfig, LLMResponse, MCPResponse } from "./types";
 
 // Cliente que conecta LLM REST API con MCP Server
 class LLMRestClient {
@@ -184,7 +184,7 @@ class LLMRestClient {
             });
             results.push({
               action: "Leer archivo hello.txt",
-              result: resource.contents[0].text,
+              result: resource.contents[0]?.text || "",
             });
             break;
 

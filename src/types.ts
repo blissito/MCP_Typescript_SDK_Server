@@ -1,6 +1,11 @@
+export interface MCPResourceContent {
+  uri: string;
+  text: string;
+  mimeType: string;
+}
+
 export interface MCPResponse {
-  type: "resource" | "tool";
-  content: string;
+  contents: MCPResourceContent[];
   error?: string;
 }
 
