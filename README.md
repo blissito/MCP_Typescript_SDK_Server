@@ -4,6 +4,92 @@ SDK para interactuar con el Model Context Protocol (MCP) tanto en el cliente com
 
 **🚀 Ahora usando [fixtergeek-mcp-server](https://github.com/blissito/fixtergeek-mcp-server) como base del servidor MCP**
 
+## 🎯 Casos de Uso Principales
+
+### 🏥 **Sector Salud - Análisis de Datos Médicos**
+
+```typescript
+// Análisis de resultados de laboratorio
+const analisis = await client.processQuery(
+  "Analiza los valores de hemoglobina y glucosa del paciente ID-12345"
+);
+
+// Interpretación de radiografías
+const diagnostico = await client.processQuery(
+  "Revisa la radiografía de tórax del paciente y busca signos de neumonía"
+);
+```
+
+### 🏦 **Sector Financiero - Gestión de Riesgos**
+
+```typescript
+// Evaluación de riesgo crediticio
+const riesgo = await client.processQuery(
+  "Evalúa el riesgo crediticio del cliente corporativo XYZ basado en su historial financiero"
+);
+
+// Análisis de mercado en tiempo real
+const mercado = await client.processQuery(
+  "Analiza las tendencias del mercado de valores y genera recomendaciones de inversión"
+);
+```
+
+### 🏭 **Sector Industrial - Mantenimiento Predictivo**
+
+```typescript
+// Monitoreo de equipos industriales
+const estado = await client.processQuery(
+  "Analiza los datos de vibración de la turbina T-001 y predice el próximo mantenimiento"
+);
+
+// Optimización de procesos
+const optimizacion = await client.processQuery(
+  "Optimiza los parámetros de temperatura y presión en el reactor químico R-205"
+);
+```
+
+### 🛡️ **Ciberseguridad - Detección de Amenazas**
+
+```typescript
+// Análisis de logs de seguridad
+const amenazas = await client.processQuery(
+  "Analiza los logs del firewall y detecta patrones de actividad sospechosa"
+);
+
+// Evaluación de vulnerabilidades
+const vulnerabilidades = await client.processQuery(
+  "Evalúa el reporte de escaneo de vulnerabilidades del sistema de pagos"
+);
+```
+
+### 📊 **Analítica de Negocios - Insights Empresariales**
+
+```typescript
+// Análisis de ventas y tendencias
+const ventas = await client.processQuery(
+  "Analiza las ventas del Q4 por región y genera insights para la estrategia del próximo trimestre"
+);
+
+// Predicción de demanda
+const demanda = await client.processQuery(
+  "Predice la demanda de productos para el próximo mes basado en datos históricos"
+);
+```
+
+### 🚀 **Desarrollo de Software - DevOps y CI/CD**
+
+```typescript
+// Análisis de rendimiento de aplicaciones
+const rendimiento = await client.processQuery(
+  "Analiza las métricas de rendimiento de la aplicación web y identifica cuellos de botella"
+);
+
+// Gestión de incidentes
+const incidente = await client.processQuery(
+  "Analiza el incidente de producción y genera un plan de acción para la resolución"
+);
+```
+
 ## Instalación
 
 ```bash
