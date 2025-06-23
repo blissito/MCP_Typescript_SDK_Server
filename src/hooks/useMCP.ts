@@ -1,38 +1,33 @@
-import { useState, useEffect } from "react";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import type { MCPResponse } from "../types";
+/**
+ * Hook personalizado para conectar React con el servidor MCP
+ *
+ * Requisitos:
+ * - React instalado: npm install react
+ * - MCP SDK instalado: npm install @modelcontextprotocol/sdk
+ * - Servidor MCP corriendo: npm start
+ */
 
-export interface MCPHookResult {
-  isConnected: boolean;
-  loading: boolean;
-  readResource: (uri: string) => Promise<MCPResponse>;
-  callTool: (name: string) => Promise<MCPResponse>;
-}
+import { useState, useEffect } from "react";
+import { MCPHttpClient } from "./http_client";
+import type { MCPResponse, MCPStatus, MCPHookResult } from "../types";
+
+// Los tipos MCPResponse, MCPStatus y MCPHookResult se importan desde types.ts
 
 export function useMCP(): MCPHookResult {
-  const [client, setClient] = useState<Client | null>(null);
+  const [client, setClient] = useState<MCPHttpClient | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const initClient = async () => {
-      const mcpClient = new Client({
-        name: "react-mcp-client",
-        version: "1.0.0",
-      });
-
-      const transport = new StdioClientTransport({
-        command: "npx",
-        args: ["tsx", "mcp_server.ts"],
-      });
-
       try {
-        await mcpClient.connect(transport);
-        setClient(mcpClient);
+        const httpClient = new MCPHttpClient();
+        setClient(httpClient);
         setIsConnected(true);
+        console.log("✅ MCP Client conectado desde React");
       } catch (error) {
         console.error("Error connecting to MCP server:", error);
+        setIsConnected(false);
       }
     };
 
@@ -40,7 +35,8 @@ export function useMCP(): MCPHookResult {
 
     return () => {
       if (client) {
-        client.close();
+        // No necesitamos desconectar el cliente HTTP
+        setIsConnected(false);
       }
     };
   }, []);
@@ -50,14 +46,27 @@ export function useMCP(): MCPHookResult {
 
     setLoading(true);
     try {
-      const resource = await client.readResource({ uri });
-      return {
-        type: "resource",
-        content: String(resource.contents[0].text),
-      };
+      return await client.readResource(uri);
     } catch (error) {
       return {
         type: "resource",
+        content: "",
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const processQuery = async (query: string): Promise<MCPResponse> => {
+    if (!client) throw new Error("MCP client not connected");
+
+    setLoading(true);
+    try {
+      return await client.processQuery(query);
+    } catch (error) {
+      return {
+        type: "tool",
         content: "",
         error: error instanceof Error ? error.message : "Unknown error",
       };
@@ -71,16 +80,7 @@ export function useMCP(): MCPHookResult {
 
     setLoading(true);
     try {
-      const result: any = await client.callTool({ name });
-      let toolText = "";
-      if (Array.isArray(result.content) && result.content.length > 0) {
-        const val = result.content[0].text;
-        toolText = typeof val === "string" ? val : JSON.stringify(val ?? "");
-      }
-      return {
-        type: "tool",
-        content: toolText,
-      };
+      return await client.callTool(name);
     } catch (error) {
       return {
         type: "tool",
@@ -92,10 +92,23 @@ export function useMCP(): MCPHookResult {
     }
   };
 
+  const getStatus = () => ({
+    isConnected,
+    loading,
+    client: isConnected ? "connected" : "disconnected"
+  });
+
+  const disconnect = async () => {
+    setIsConnected(false);
+  };
+
   return {
     isConnected,
     loading,
     readResource,
     callTool,
+    processQuery,
+    getStatus,
+    disconnect
   };
 }

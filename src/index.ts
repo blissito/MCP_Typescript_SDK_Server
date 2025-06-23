@@ -17,17 +17,15 @@
  */
 
 // Client-side tools
-export * from "./hooks";
-export { MCPHttpClient } from "./http_client";
+import './polyfills';
 
-// Server-side tools
-export { MCPWebServer } from "../web_server";
-export { LLMClient } from "./client";
-export { createOllamaClient, createOpenAIClient } from "./client";
+// Exportar componentes principales
+export { useMCP } from './hooks/useMCP';
+export { MCPHttpClient } from './hooks/http_client';
+export { MCPWebServer } from '../web_server';
+export { LLMClient, createOllamaClient, createOpenAIClient } from './client';
 
-// LLM REST client
-export { LLMRestClient } from "./llm_rest_client";
-export type { LLMConfig, LLMResponse } from "./llm_rest_client";
-
-// Types
-export type { MCPResponse, MCPConfig } from "./types";
+// Exportar tipos
+export type { MCPResponse, MCPStatus, MCPHookResult } from './types';
+export type { LLMConfig, LLMResponse } from './llm_rest_client';
+export type { MCPConfig } from './types';

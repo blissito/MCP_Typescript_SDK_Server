@@ -24,6 +24,24 @@ export interface ToolMCPResponse extends BaseMCPResponse {
 // Unión de tipos para MCPResponse
 export type MCPResponse = ResourceMCPResponse | ToolMCPResponse;
 
+// Estado del MCP
+export interface MCPStatus {
+  isConnected: boolean;
+  loading: boolean;
+  client: string;
+}
+
+// Resultado del hook MCP
+export interface MCPHookResult {
+  isConnected: boolean;
+  loading: boolean;
+  readResource: (uri: string) => Promise<MCPResponse>;
+  callTool: (name: string) => Promise<MCPResponse>;
+  processQuery: (query: string) => Promise<MCPResponse>;
+  getStatus: () => MCPStatus;
+  disconnect: () => Promise<void>;
+}
+
 // Tipos para MCPConfig
 export interface MCPConfig {
   name: string;

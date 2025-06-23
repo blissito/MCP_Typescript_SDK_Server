@@ -1,4 +1,4 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from 'tsup';
 
 export default defineConfig({
   entry: {
@@ -12,11 +12,11 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   treeshake: true,
-  external: ["react", "react-dom", "process"],
+  external: ["react", "react-dom", "process", "http", "fs", "path", "ws"],
   outDir: "dist",
   target: "esnext",
   minify: false,
-  platform: "browser",
+  platform: "node",
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),
     "process.env": "undefined",
