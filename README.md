@@ -421,8 +421,6 @@ main();
 - Personalización de URLs y modelos
 - Soporte para diferentes proveedores de LLMs
 
-## Ejemplos de uso
-
 ## 🎯 Características Principales
 
 - 🤖 **Integración con LLMs**
